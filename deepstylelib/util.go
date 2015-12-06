@@ -7,7 +7,7 @@ import (
 
 func writeToFile(reader io.Reader, destFilename string) error {
 
-	destFile, err := os.Open(destFilename)
+	destFile, err := os.Create(destFilename)
 	if err != nil {
 		return err
 	}

@@ -1,6 +1,7 @@
 package deepstylelib
 
 import (
+	"fmt"
 	"log"
 	"path"
 
@@ -62,18 +63,21 @@ func (d DeepStyleJob) DownloadAttachments() error {
 
 		attachmentReader, err := d.jobDoc.RetrieveAttachment(attachmentName)
 		if err != nil {
-			return err
+			return fmt.Errorf("Error retrieving attachment: %v", err)
 		}
-		attachmentFilename := path.Join(
-			d.config.TempDir,
+
+		filename := fmt.Sprintf(
+			"%v_%v.png",
 			d.jobDoc.Id,
-			"_",
 			attachmentName,
-			".png", // TODO: look at attachment content type and get correct extentions
 		)
-		err = writeToFile(attachmentReader, attachmentFilename)
+		attachmentFilepath := path.Join(
+			d.config.TempDir,
+			filename,
+		)
+		err = writeToFile(attachmentReader, attachmentFilepath)
 		if err != nil {
-			return err
+			return fmt.Errorf("Error writing file: %v", err)
 		}
 
 	}
