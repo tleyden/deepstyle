@@ -1,5 +1,7 @@
 package deepstylelib
 
+import "io"
+
 // Doc types
 const (
 	Job = "job"
@@ -32,10 +34,10 @@ func (doc TypedDocument) IsJob() bool {
 
 type JobDocument struct {
 	TypedDocument
-	Attachments Attachments `json:"_attachments"`
-	State       string      `json:"state"`
-
-	config configuration
+	Attachments  Attachments `json:"_attachments"`
+	State        string      `json:"state"`
+	ErrorMessage string      `json:"error_message"`
+	config       configuration
 }
 
 func (doc JobDocument) IsReadyToProcess() bool {
@@ -78,12 +80,38 @@ func (doc *JobDocument) UpdateState(newState string) (updated bool, err error) {
 
 }
 
-func (doc *JobDocument) SetErrorMessage(err error) {
+func (doc *JobDocument) SetErrorMessage(errorMessage error) (updated bool, err error) {
+
+	db := doc.config.Database
+
+	retryUpdater := func() {
+		doc.ErrorMessage = errorMessage.Error()
+	}
+
+	retryDoneMetric := func() bool {
+		return doc.ErrorMessage == errorMessage.Error()
+	}
+
+	retryRefresh := func() error {
+		return doc.RefreshFromDB()
+	}
+
+	return db.EditRetry(
+		doc,
+		retryUpdater,
+		retryDoneMetric,
+		retryRefresh,
+	)
 
 }
 
 func (doc *JobDocument) AddAttachment(attachmentName, outputFilePath string) {
 
+}
+
+func (doc *JobDocument) RetrieveAttachment(attachmentName string) (io.Reader, error) {
+	db := doc.config.Database
+	return db.RetrieveAttachment(doc.Id, attachmentName)
 }
 
 func (doc *JobDocument) SetConfiguration(config configuration) {

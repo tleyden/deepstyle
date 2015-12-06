@@ -1,6 +1,17 @@
 package deepstylelib
 
-import "github.com/tleyden/go-couch"
+import (
+	"log"
+	"path"
+
+	"github.com/tleyden/go-couch"
+)
+
+const (
+	SourceImageAttachment = "source_image"
+	StyleImageAttachment  = "style_image"
+	ResultImageAttachment = "result_image"
+)
 
 type configuration struct {
 	Database     couch.Database
@@ -20,19 +31,53 @@ func NewDeepStyleJob(jobDoc JobDocument, config configuration) *DeepStyleJob {
 	}
 }
 
-func (d DeepStyleJob) Execute() (err error, outputFilePath string) {
+func (d DeepStyleJob) Execute() (err error, outputFilePath, tmpDirPath string) {
 
 	if d.config.UnitTestMode == true {
-		return nil, "/tmp/foo"
+		return nil, "/tmp/foo", "/tmp"
 	}
 
-	// Save attachments to temp dir
+	if err := d.DownloadAttachments(); err != nil {
+		return err, "", ""
+	}
 
-	// Invoke neural style via Exec()
+	outputFilePath = path.Join(
+		d.config.TempDir,
+		d.jobDoc.Id,
+		"_result.png",
+	)
 
-	// Return path to output file
+	// Invoke neural style via Exec() and pass in result filename
+	// cd ~/neural-style
+	// th neural_style.lua -backend cudnn -image_size 900 -style_image images/andrea_field.jpeg -content_image images/backyard.jpg -output_image images/styled-andrea-field-backyard_900.jpg
 
-	return nil, "todo"
+	return nil, outputFilePath, d.config.TempDir
+
+}
+
+func (d DeepStyleJob) DownloadAttachments() error {
+
+	attachmentNames := []string{SourceImageAttachment, StyleImageAttachment}
+	for _, attachmentName := range attachmentNames {
+
+		attachmentReader, err := d.jobDoc.RetrieveAttachment(attachmentName)
+		if err != nil {
+			return err
+		}
+		attachmentFilename := path.Join(
+			d.config.TempDir,
+			d.jobDoc.Id,
+			"_",
+			attachmentName,
+			".png", // TODO: look at attachment content type and get correct extentions
+		)
+		err = writeToFile(attachmentReader, attachmentFilename)
+		if err != nil {
+			return err
+		}
+
+	}
+	return nil
 
 }
 
@@ -40,7 +85,7 @@ func executeDeepStyleJob(config configuration, jobDoc JobDocument) error {
 
 	jobDoc.SetConfiguration(config)
 	deepStyleJob := NewDeepStyleJob(jobDoc, config)
-	err, outputFilePath := deepStyleJob.Execute()
+	err, outputFilePath, tmpDirPath := deepStyleJob.Execute()
 
 	// Did the job fail?
 	if err != nil {
@@ -55,6 +100,7 @@ func executeDeepStyleJob(config configuration, jobDoc JobDocument) error {
 	jobDoc.UpdateState(StateProcessingSuccessful)
 
 	// Delete all temp files
+	log.Printf("Delete %v", tmpDirPath)
 
 	return nil
 }
