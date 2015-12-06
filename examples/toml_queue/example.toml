@@ -1,0 +1,10 @@
+
+outputpath="images_s3/works"
+
+[[items]]
+painting = "images_s3/paintings/surya_painting.jpg"
+photo = "images_s3/photos/backyard.jpg"
+
+[[items]]
+painting = "images_s3/paintings/sirens.jpg"
+photo = "images_s3/photos/back_porch.JPG"

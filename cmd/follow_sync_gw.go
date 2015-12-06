@@ -1,49 +1,51 @@
-// Copyright ©2015 NAME HERE <EMAIL ADDRESS>
-//
-// 
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//     
 package cmd
 
 import (
-  "fmt"
+	"log"
 
 	"github.com/spf13/cobra"
+	"github.com/tleyden/deepstyle/deepstylelib"
 )
 
-// follow_sync_gwCmd respresents the follow_sync_gw command
 var follow_sync_gwCmd = &cobra.Command{
-	Use:   "follow_sync_gw",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
 
-Cobra is a Cli library for Go that empowers applications. This
-application is a tool to generate the needed files to quickly create a Cobra
-application.`,
+	Use:   "follow_sync_gw",
+	Short: "Follow the sync gateway changes feed and process jobs",
+	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-    // TODO: Work your own magic here
-    fmt.Println("follow_sync_gw called")
-   },
+
+		if err := cmd.ParseFlags(args); err != nil {
+			log.Printf("err: %v", err)
+		}
+
+		urlFlag := cmd.Flag("url")
+
+		urlVal := urlFlag.Value.String()
+		log.Printf("url val: %v", urlVal)
+		if urlVal == "" {
+			log.Printf("ERROR: Missing: --url.\n  %v", cmd.UsageString())
+
+			return
+		}
+
+		changesFollower, err := deepstylelib.NewChangesFeedFollower(urlVal)
+		if err != nil {
+			log.Panicf("%v", err)
+		}
+		changesFollower.Follow()
+
+	},
 }
 
 func init() {
+
 	RootCmd.AddCommand(follow_sync_gwCmd)
 
 	// Here you will define your flags and configuration settings
 
 	// Cobra supports Persistent Flags which will work for this command and all subcommands
-  // follow_sync_gwCmd.PersistentFlags().String("foo", "", "A help for foo")
+	follow_sync_gwCmd.PersistentFlags().String("url", "", "Sync Gateway URL")
+	follow_sync_gwCmd.MarkPersistentFlagRequired("url")
 
 	// Cobra supports local flags which will only run when this command is called directly
 	// follow_sync_gwCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle" )
