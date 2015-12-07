@@ -71,9 +71,9 @@ func (d DeepStyleJob) Execute() (err error, outputFilePath, stdOutAndErr string)
 
 func (d DeepStyleJob) executeNeuralStyle(sourceImagePath, styleImagePath, outputFilePath string) (stdOutAndErr []byte, err error) {
 
-	theanoInstalled := theanoInstalled()
+	torchInstalled := torchInstalled()
 
-	if theanoInstalled {
+	if torchInstalled {
 		useGpu := hasGPU()
 		cmd := d.generateNeuralStyleCommand(
 			sourceImagePath,
@@ -89,9 +89,11 @@ func (d DeepStyleJob) executeNeuralStyle(sourceImagePath, styleImagePath, output
 		return cmd.CombinedOutput()
 
 	} else {
+		useGpu := hasGPU()
+		log.Printf("useGpu: %v", useGpu)
 		// copy the sourceImagePath to the outputFilePath
 		cp(outputFilePath, sourceImagePath)
-		return []byte("Theano not installed, just created a fake output file"), nil
+		return []byte("Torch not installed, just created a fake output file"), nil
 	}
 
 }

@@ -52,62 +52,6 @@ func (doc JobDocument) IsReadyToProcess() bool {
 	return doc.State == StateReadyToProcess
 }
 
-func (doc *JobDocument) RefreshFromDB() error {
-	db := doc.config.Database
-	jobDoc := JobDocument{}
-	jobDoc.SetConfiguration(doc.config)
-	err := db.Retrieve(doc.Id, &jobDoc)
-	if err != nil {
-		return err
-	}
-	*doc = jobDoc
-	return nil
-}
-
-func (doc *JobDocument) AddAttachment(attachmentName, filepath string) (err error) {
-
-	db := doc.config.Database
-	dbUrl := db.DBURL()
-
-	endpointUrlStr := fmt.Sprintf("%v/%v/%v",
-		dbUrl,
-		doc.Id,
-		attachmentName,
-	)
-	endpointUrlStr = fmt.Sprintf("%v?rev=%v", endpointUrlStr, doc.Revision)
-	log.Printf("endpointUrlStr: %v", endpointUrlStr)
-
-	client := &http.Client{}
-
-	f, err := os.Open(filepath)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	reader := bufio.NewReader(f)
-	req, err := http.NewRequest("PUT", endpointUrlStr, reader)
-	if err != nil {
-		return err
-	}
-
-	req.Header.Set("Content-Type", "image/png")
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return err
-	}
-
-	defer resp.Body.Close()
-
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return fmt.Errorf("Unable to upload attachment: %v from %v. Unexpected status code in response: %v", attachmentName, filepath, resp.StatusCode)
-	}
-
-	return nil
-
-}
-
 func (doc *JobDocument) SetStdOutAndErr(stdOutAndErr string) (updated bool, err error) {
 
 	db := doc.config.Database
@@ -197,4 +141,65 @@ func (doc *JobDocument) RetrieveAttachment(attachmentName string) (io.Reader, er
 
 func (doc *JobDocument) SetConfiguration(config configuration) {
 	doc.config = config
+}
+
+func (doc *JobDocument) RefreshFromDB() error {
+
+	db := doc.config.Database
+	jobDoc := JobDocument{}
+
+	// if we don't do this, the new doc won't have the config
+	// with the db url.
+	jobDoc.SetConfiguration(doc.config)
+
+	err := db.Retrieve(doc.Id, &jobDoc)
+	if err != nil {
+		return err
+	}
+	*doc = jobDoc
+	return nil
+}
+
+func (doc *JobDocument) AddAttachment(attachmentName, filepath string) (err error) {
+
+	db := doc.config.Database
+	dbUrl := db.DBURL()
+
+	endpointUrlStr := fmt.Sprintf("%v/%v/%v",
+		dbUrl,
+		doc.Id,
+		attachmentName,
+	)
+	endpointUrlStr = fmt.Sprintf("%v?rev=%v", endpointUrlStr, doc.Revision)
+	log.Printf("endpointUrlStr: %v", endpointUrlStr)
+
+	client := &http.Client{}
+
+	f, err := os.Open(filepath)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	reader := bufio.NewReader(f)
+	req, err := http.NewRequest("PUT", endpointUrlStr, reader)
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Content-Type", "image/png")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return fmt.Errorf("Unable to upload attachment: %v from %v. Unexpected status code in response: %v", attachmentName, filepath, resp.StatusCode)
+	}
+
+	return nil
+
 }

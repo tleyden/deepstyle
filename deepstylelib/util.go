@@ -3,6 +3,7 @@ package deepstylelib
 import (
 	"io"
 	"os"
+	"os/exec"
 )
 
 func writeToFile(reader io.Reader, destFilename string) error {
@@ -18,11 +19,34 @@ func writeToFile(reader io.Reader, destFilename string) error {
 }
 
 func hasGPU() bool {
-	return false // TODOO!!!  check if nvidia driver loaded
+
+	cmd := exec.Command("nvidia-smi")
+
+	if err := cmd.Start(); err != nil {
+		return false
+	}
+
+	if err := cmd.Wait(); err != nil {
+		return false
+	}
+
+	return true
 }
 
-func theanoInstalled() bool {
-	return false // TODO!! Check
+func torchInstalled() bool {
+
+	cmd := exec.Command("th", "--help")
+
+	if err := cmd.Start(); err != nil {
+		return false
+	}
+
+	if err := cmd.Wait(); err != nil {
+		return false
+	}
+
+	return true
+
 }
 
 func cp(dst, src string) error {
