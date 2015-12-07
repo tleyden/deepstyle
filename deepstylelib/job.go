@@ -46,7 +46,7 @@ func (d DeepStyleJob) Execute() (err error, outputFilePath, stdOutAndErr string)
 	}
 
 	outputFilename := fmt.Sprintf(
-		"%v_%v.png",
+		"%v_%v.jpg",
 		d.jobDoc.Id,
 		ResultImageAttachment,
 	)
@@ -129,7 +129,7 @@ func (d DeepStyleJob) DownloadAttachments() (err error, sourceImagePath, styleIm
 		}
 
 		filename := fmt.Sprintf(
-			"%v_%v.png",
+			"%v_%v.jpg",
 			d.jobDoc.Id,
 			attachmentName,
 		)
