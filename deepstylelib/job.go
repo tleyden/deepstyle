@@ -55,10 +55,6 @@ func (d DeepStyleJob) Execute() (err error, outputFilePath, stdOutAndErr string)
 		outputFilename,
 	)
 
-	// Invoke neural style via Exec() and pass in result filename
-	// cd ~/neural-style
-	// th neural_style.lua -backend cudnn -image_size 900 -style_image images/andrea_field.jpeg -content_image images/backyard.jpg -output_image images/styled-andrea-field-backyard_900.jpg
-
 	stdOutAndErrByteSlice, err := d.executeNeuralStyle(
 		sourceImagePath,
 		styleImagePath,
@@ -82,7 +78,7 @@ func (d DeepStyleJob) executeNeuralStyle(sourceImagePath, styleImagePath, output
 			useGpu,
 		)
 		// set the current working directory to ~/neural_style
-		cmd.Dir = "~/neural-style"
+		cmd.Dir = "/home/ubuntu/neural-style"
 
 		// Execute the command and get the output
 		log.Printf("Invoking neural-style")
