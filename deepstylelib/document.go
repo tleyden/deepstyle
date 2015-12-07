@@ -1,6 +1,13 @@
 package deepstylelib
 
-import "io"
+import (
+	"bufio"
+	"fmt"
+	"io"
+	"log"
+	"net/http"
+	"os"
+)
 
 // Doc types
 const (
@@ -37,6 +44,7 @@ type JobDocument struct {
 	Attachments  Attachments `json:"_attachments"`
 	State        string      `json:"state"`
 	ErrorMessage string      `json:"error_message"`
+	StdOutAndErr string      `json:"std_out_and_err"`
 	config       configuration
 }
 
@@ -47,12 +55,85 @@ func (doc JobDocument) IsReadyToProcess() bool {
 func (doc *JobDocument) RefreshFromDB() error {
 	db := doc.config.Database
 	jobDoc := JobDocument{}
+	jobDoc.SetConfiguration(doc.config)
 	err := db.Retrieve(doc.Id, &jobDoc)
 	if err != nil {
 		return err
 	}
 	*doc = jobDoc
 	return nil
+}
+
+func (doc *JobDocument) AddAttachment(attachmentName, filepath string) (err error) {
+
+	db := doc.config.Database
+	dbUrl := db.DBURL()
+
+	endpointUrlStr := fmt.Sprintf("%v/%v/%v",
+		dbUrl,
+		doc.Id,
+		attachmentName,
+	)
+	endpointUrlStr = fmt.Sprintf("%v?rev=%v", endpointUrlStr, doc.Revision)
+	log.Printf("endpointUrlStr: %v", endpointUrlStr)
+
+	client := &http.Client{}
+
+	f, err := os.Open(filepath)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	reader := bufio.NewReader(f)
+	req, err := http.NewRequest("PUT", endpointUrlStr, reader)
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Content-Type", "image/png")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return fmt.Errorf("Unable to upload attachment: %v from %v. Unexpected status code in response: %v", attachmentName, filepath, resp.StatusCode)
+	}
+
+	return nil
+
+}
+
+func (doc *JobDocument) SetStdOutAndErr(stdOutAndErr string) (updated bool, err error) {
+
+	db := doc.config.Database
+	if stdOutAndErr == "" {
+		return false, nil
+	}
+
+	retryUpdater := func() {
+		doc.StdOutAndErr = stdOutAndErr
+	}
+
+	retryDoneMetric := func() bool {
+		return doc.StdOutAndErr == stdOutAndErr
+	}
+
+	retryRefresh := func() error {
+		return doc.RefreshFromDB()
+	}
+
+	return db.EditRetry(
+		doc,
+		retryUpdater,
+		retryDoneMetric,
+		retryRefresh,
+	)
+
 }
 
 func (doc *JobDocument) UpdateState(newState string) (updated bool, err error) {
@@ -84,6 +165,10 @@ func (doc *JobDocument) SetErrorMessage(errorMessage error) (updated bool, err e
 
 	db := doc.config.Database
 
+	if errorMessage.Error() == "" {
+		return false, nil
+	}
+
 	retryUpdater := func() {
 		doc.ErrorMessage = errorMessage.Error()
 	}
@@ -102,10 +187,6 @@ func (doc *JobDocument) SetErrorMessage(errorMessage error) (updated bool, err e
 		retryDoneMetric,
 		retryRefresh,
 	)
-
-}
-
-func (doc *JobDocument) AddAttachment(attachmentName, outputFilePath string) {
 
 }
 

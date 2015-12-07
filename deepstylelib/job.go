@@ -3,6 +3,7 @@ package deepstylelib
 import (
 	"fmt"
 	"log"
+	"os/exec"
 	"path"
 
 	"github.com/tleyden/go-couch"
@@ -32,38 +33,101 @@ func NewDeepStyleJob(jobDoc JobDocument, config configuration) *DeepStyleJob {
 	}
 }
 
-func (d DeepStyleJob) Execute() (err error, outputFilePath, tmpDirPath string) {
+func (d DeepStyleJob) Execute() (err error, outputFilePath, stdOutAndErr string) {
 
 	if d.config.UnitTestMode == true {
 		return nil, "/tmp/foo", "/tmp"
 	}
 
-	if err := d.DownloadAttachments(); err != nil {
+	err, sourceImagePath, styleImagePath := d.DownloadAttachments()
+
+	if err != nil {
 		return err, "", ""
 	}
 
+	outputFilename := fmt.Sprintf(
+		"%v_%v.png",
+		d.jobDoc.Id,
+		ResultImageAttachment,
+	)
 	outputFilePath = path.Join(
 		d.config.TempDir,
-		d.jobDoc.Id,
-		"_result.png",
+		outputFilename,
 	)
 
 	// Invoke neural style via Exec() and pass in result filename
 	// cd ~/neural-style
 	// th neural_style.lua -backend cudnn -image_size 900 -style_image images/andrea_field.jpeg -content_image images/backyard.jpg -output_image images/styled-andrea-field-backyard_900.jpg
 
-	return nil, outputFilePath, d.config.TempDir
+	stdOutAndErrByteSlice, err := d.executeNeuralStyle(
+		sourceImagePath,
+		styleImagePath,
+		outputFilePath,
+	)
+
+	return err, outputFilePath, string(stdOutAndErrByteSlice)
 
 }
 
-func (d DeepStyleJob) DownloadAttachments() error {
+func (d DeepStyleJob) executeNeuralStyle(sourceImagePath, styleImagePath, outputFilePath string) (stdOutAndErr []byte, err error) {
+
+	theanoInstalled := theanoInstalled()
+
+	if theanoInstalled {
+		useGpu := hasGPU()
+		cmd := d.generateNeuralStyleCommand(
+			sourceImagePath,
+			styleImagePath,
+			outputFilePath,
+			useGpu,
+		)
+		// set the current working directory to ~/neural_style
+		cmd.Dir = "~/neural-style"
+
+		// Execute the command and get the output
+		log.Printf("Invoking neural-style")
+		return cmd.CombinedOutput()
+
+	} else {
+		// copy the sourceImagePath to the outputFilePath
+		cp(outputFilePath, sourceImagePath)
+		return []byte("Theano not installed, just created a fake output file"), nil
+	}
+
+}
+
+func (d DeepStyleJob) generateNeuralStyleCommand(sourceImagePath, styleImagePath, outputFilePath string, useGpu bool) (cmd *exec.Cmd) {
+
+	gpuId := "-1"
+	if useGpu {
+		gpuId = "0"
+	}
+
+	return exec.Command(
+		"th",
+		"neural_style.lua",
+		"-gpu",
+		gpuId,
+		"-style_image",
+		styleImagePath,
+		"-content_image",
+		sourceImagePath,
+		"-output_image",
+		outputFilePath,
+	)
+
+}
+
+func (d DeepStyleJob) DownloadAttachments() (err error, sourceImagePath, styleImagePath string) {
 
 	attachmentNames := []string{SourceImageAttachment, StyleImageAttachment}
+	attachmentPaths := []string{}
+
 	for _, attachmentName := range attachmentNames {
 
 		attachmentReader, err := d.jobDoc.RetrieveAttachment(attachmentName)
 		if err != nil {
-			return fmt.Errorf("Error retrieving attachment: %v", err)
+			return fmt.Errorf("Error retrieving attachment: %v", err), "", ""
 		}
 
 		filename := fmt.Sprintf(
@@ -75,13 +139,15 @@ func (d DeepStyleJob) DownloadAttachments() error {
 			d.config.TempDir,
 			filename,
 		)
+		attachmentPaths = append(attachmentPaths, attachmentFilepath)
+
 		err = writeToFile(attachmentReader, attachmentFilepath)
 		if err != nil {
-			return fmt.Errorf("Error writing file: %v", err)
+			return fmt.Errorf("Error writing file: %v", err), "", ""
 		}
 
 	}
-	return nil
+	return err, attachmentPaths[0], attachmentPaths[1]
 
 }
 
@@ -89,22 +155,34 @@ func executeDeepStyleJob(config configuration, jobDoc JobDocument) error {
 
 	jobDoc.SetConfiguration(config)
 	deepStyleJob := NewDeepStyleJob(jobDoc, config)
-	err, outputFilePath, tmpDirPath := deepStyleJob.Execute()
+	err, outputFilePath, stdOutAndErr := deepStyleJob.Execute()
 
 	// Did the job fail?
 	if err != nil {
 		// Record failure
+		log.Printf("Job failed with error: %v", err)
 		jobDoc.UpdateState(StateProcessingFailed)
 		jobDoc.SetErrorMessage(err)
+		jobDoc.SetStdOutAndErr(stdOutAndErr)
+		return err
+	}
+
+	// Try to attach the result image, otherwise consider it a failure
+	if err := jobDoc.AddAttachment(ResultImageAttachment, outputFilePath); err != nil {
+		jobDoc.UpdateState(StateProcessingFailed)
+		log.Printf("Set err message to: %v", err)
+		updated, errSet := jobDoc.SetErrorMessage(err)
+		log.Printf("setErrorMessage updated: %v errSet: %v", updated, errSet)
+		updated, errSet = jobDoc.SetStdOutAndErr(stdOutAndErr)
+		log.Printf("SetStdOutAndErr updated: %v errSet: %v", updated, errSet)
 		return err
 	}
 
 	// Record successful result in job
-	jobDoc.AddAttachment("result", outputFilePath)
+	jobDoc.SetStdOutAndErr(stdOutAndErr)
 	jobDoc.UpdateState(StateProcessingSuccessful)
 
-	// Delete all temp files
-	log.Printf("Delete %v", tmpDirPath)
+	// TODO: Delete all temp files
 
 	return nil
 }

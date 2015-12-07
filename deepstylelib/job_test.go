@@ -1,5 +1,11 @@
 package deepstylelib
 
+import (
+	"testing"
+
+	"github.com/tleyden/go-couch"
+)
+
 /*
 
 TODO:
@@ -21,3 +27,16 @@ func TestExecuteDeepStyleJob(t *testing.T) {
 
 }
 */
+
+func TestAddAttachment(t *testing.T) {
+	config := configuration{
+		Database:     couch.Database{},
+		TempDir:      "/tmp",
+		UnitTestMode: true,
+	}
+
+	jobDoc := JobDocument{}
+	jobDoc.SetConfiguration(config)
+	jobDoc.AddAttachment("foo", "/tmp/foo.png")
+
+}
