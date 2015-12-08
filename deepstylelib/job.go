@@ -55,8 +55,6 @@ func (d DeepStyleJob) Execute() (err error, outputFilePath, stdOutAndErr string)
 		outputFilename,
 	)
 
-	jobDoc.UpdateState(StateBeingProcessed)
-
 	stdOutAndErrByteSlice, err := d.executeNeuralStyle(
 		sourceImagePath,
 		styleImagePath,
@@ -154,6 +152,8 @@ func (d DeepStyleJob) DownloadAttachments() (err error, sourceImagePath, styleIm
 func executeDeepStyleJob(config configuration, jobDoc JobDocument) error {
 
 	jobDoc.SetConfiguration(config)
+	jobDoc.UpdateState(StateBeingProcessed)
+
 	deepStyleJob := NewDeepStyleJob(jobDoc, config)
 	err, outputFilePath, stdOutAndErr := deepStyleJob.Execute()
 
