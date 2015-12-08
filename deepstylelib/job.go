@@ -55,6 +55,8 @@ func (d DeepStyleJob) Execute() (err error, outputFilePath, stdOutAndErr string)
 		outputFilename,
 	)
 
+	jobDoc.UpdateState(StateBeingProcessed)
+
 	stdOutAndErrByteSlice, err := d.executeNeuralStyle(
 		sourceImagePath,
 		styleImagePath,
