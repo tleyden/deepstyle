@@ -170,8 +170,6 @@ func (doc *JobDocument) AddAttachment(attachmentName, filepath string) (err erro
 		doc.Id,
 		attachmentName,
 	)
-	endpointUrlStr = fmt.Sprintf("%v?rev=%v", endpointUrlStr, doc.Revision)
-	log.Printf("endpointUrlStr: %v", endpointUrlStr)
 
 	client := &http.Client{}
 
@@ -182,24 +180,44 @@ func (doc *JobDocument) AddAttachment(attachmentName, filepath string) (err erro
 	defer f.Close()
 
 	reader := bufio.NewReader(f)
-	req, err := http.NewRequest("PUT", endpointUrlStr, reader)
-	if err != nil {
-		return err
+
+	for i := 1; i <= 10; i++ {
+
+		// get latest revision of doc so we are updating the current rev
+		if err := doc.RefreshFromDB(); err != nil {
+			return err
+		}
+
+		endpointUrlStr = fmt.Sprintf("%v?rev=%v", endpointUrlStr, doc.Revision)
+		log.Printf("endpointUrlStr: %v", endpointUrlStr)
+
+		req, err := http.NewRequest("PUT", endpointUrlStr, reader)
+		if err != nil {
+			return err
+		}
+
+		req.Header.Set("Content-Type", "image/png")
+
+		resp, err := client.Do(req)
+		if err != nil {
+			return err
+		}
+
+		resp.Body.Close()
+
+		if resp.StatusCode == 409 {
+			log.Printf("409 conflict, retrying attempt #%v", i+1)
+			continue
+		}
+
+		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+			return fmt.Errorf("Unable to upload attachment: %v from %v. Unexpected status code in response: %v", attachmentName, filepath, resp.StatusCode)
+		}
+
+		return nil
+
 	}
 
-	req.Header.Set("Content-Type", "image/png")
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return err
-	}
-
-	defer resp.Body.Close()
-
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return fmt.Errorf("Unable to upload attachment: %v from %v. Unexpected status code in response: %v", attachmentName, filepath, resp.StatusCode)
-	}
-
-	return nil
+	return fmt.Errorf("Tried to add attachment 10 times, giving up")
 
 }
