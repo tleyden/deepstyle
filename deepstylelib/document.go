@@ -43,6 +43,7 @@ type JobDocument struct {
 	TypedDocument
 	Attachments  Attachments `json:"_attachments"`
 	State        string      `json:"state"`
+	Owner        string      `json:"owner"`
 	ErrorMessage string      `json:"error_message"`
 	StdOutAndErr string      `json:"std_out_and_err"`
 	config       configuration
