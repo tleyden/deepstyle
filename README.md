@@ -3,6 +3,12 @@
 
 DeepStyle in the cloud
 
+## Steps to run
+
+* Kick off ami `ami-5587c93f` (private AMI at the moment, stay tuned)
+* Run `deepstyle follow_sync_gw --url http://demo.couchbasemobile.com:4984/deepstyle/`
+* Use Paw/Curl to upload images
+
 ## JSON Docs
 
 ### Job
@@ -50,3 +56,19 @@ DeepStyle in the cloud
     * Add new attachment to doc with result
     * Change state to PROCESSING_SUCCESSFUL (or failed if exec failed)
     * Delete temp files
+
+## Adding a new command (cobra)
+
+```
+cobra add publish_cloudwatch_metrics
+```
+
+## Creating cloudwatch alarms to trigger autoscale
+
+```
+$ aws autoscaling put-scaling-policy --policy-name deepstyle-scalout --auto-scaling-group-name DeepStyle --scaling-adjustment 1 --adjustment-type ChangeInCapacity --profile tleyden
+$ aws autoscaling put-scaling-policy --policy-name deepstyle-scalein --auto-scaling-group-name DeepStyle --scaling-adjustment -1 --adjustment-type ChangeInCapacity --profile tleyden
+$ aws cloudwatch put-metric-alarm --alarm-name AddCapacityToProcessDeepStyleQueue3 --metric-name NumJobsReadyOrBeingProcessed --namespace "DeepStyleQueue" --statistic Average --period 60 --threshold 1 --comparison-operator GreaterThanOrEqualToThreshold  --evaluation-periods 1 --alarm-actions $SCALE_OUT_ARN --profile tleyden
+$ aws cloudwatch put-metric-alarm --alarm-name RemoveCapacityToProcessDeepStyleQueue3 --metric-name NumJobsReadyOrBeingProcessed --namespace "DeepStyleQueue" --statistic Average --period 60 --threshold 0 --comparison-operator LessThanOrEqualToThreshold  --evaluation-periods 1 --alarm-actions $SCALE_IN_ARN --profile tleyden
+
+```

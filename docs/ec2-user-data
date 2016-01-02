@@ -1,0 +1,3 @@
+#!/bin/bash
+su - ubuntu -c "go get -u -v github.com/tleyden/deepstyle/..."
+su - ubuntu -c "deepstyle follow_sync_gw --url http://demo.couchbasemobile.com:4984/deepstyle/ > /tmp/deepstyle.log 2>&1"

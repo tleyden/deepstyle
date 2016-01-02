@@ -16,6 +16,7 @@ var follow_sync_gwCmd = &cobra.Command{
 
 		if err := cmd.ParseFlags(args); err != nil {
 			log.Printf("err: %v", err)
+			return
 		}
 
 		urlFlag := cmd.Flag("url")
