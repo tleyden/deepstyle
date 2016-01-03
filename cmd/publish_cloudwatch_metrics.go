@@ -27,21 +27,11 @@ const (
 var publish_cloudwatch_metricsCmd = &cobra.Command{
 	Use:   "publish_cloudwatch_metrics",
 	Short: "Publish queue metrics to CloudWatch in order to trigger auto-scale alarms",
-	Long:  `Publish queue metrics to CloudWatch in order to trigger auto-scale alarms`,
+	Long:  `Publish queue metrics to CloudWatch in order to trigger auto-scale alarms.  AWS keys will be taken from environment variables or ~/.aws/.  See github.com/aws/aws-sdk-go`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if err := cmd.ParseFlags(args); err != nil {
 			log.Printf("err: %v", err)
-			return
-		}
-
-		awsKey := cmd.Flag("aws_key")
-
-		awsKeyVal := awsKey.Value.String()
-
-		log.Printf("awsKey: %v", awsKeyVal)
-		if awsKeyVal == "" {
-			log.Printf("ERROR: Missing: --aws_key.\n  %v", cmd.UsageString())
 			return
 		}
 
@@ -81,7 +71,6 @@ func numJobsReadyOrBeingProcessed(syncGwAdminUrl string) (metricValue float64, e
 	if err != nil {
 		return 0.0, fmt.Errorf("Error connecting to db: %v.  Err: %v", syncGwAdminUrl, err)
 	}
-	log.Printf("connected to db: %v", db)
 
 	viewUrl := fmt.Sprintf("_design/%v/_view/%v", DesignDocName, ViewName)
 	options := map[string]interface{}{}
@@ -114,7 +103,6 @@ func numJobsReadyOrBeingProcessed(syncGwAdminUrl string) (metricValue float64, e
 			return 0.0, err
 		}
 	}
-	log.Printf("output: %+v", output)
 	outputRows := output["total_rows"].(float64)
 	return float64(outputRows), nil
 
@@ -185,23 +173,26 @@ func installView(syncGwAdminUrl string) error {
 }
 
 func addCloudWatchMetrics(syncGwAdminUrl string) error {
+	for {
+
+		log.Printf("Adding metrics for queue")
+		addCloudWatchMetric(syncGwAdminUrl)
+
+		log.Printf("Sleeping 30s")
+		<-time.After(time.Duration(30) * time.Second)
+
+	}
+}
+
+func addCloudWatchMetric(syncGwAdminUrl string) error {
 
 	metricValue, err := numJobsReadyOrBeingProcessed(syncGwAdminUrl)
-	log.Printf("numJobsReadyOrBeingProcessed: %v", metricValue)
+	log.Printf("Adding metric: numJobsReadyOrBeingProcessed = %v", metricValue)
 	if err != nil {
 		return err
 	}
 
-	// TODO: push something to CloudWatch
-	// CLI example:
-	//   aws cloudwatch put-metric-data
-	//     --metric-name PageViewCount
-	//      --namespace "MyService"
-	//     --value 2
-	//     --timestamp 2014-02-14T12:00:00.000Z
 	cloudwatchSvc := cloudwatch.New(session.New(), &aws.Config{Region: aws.String("us-east-1")})
-
-	log.Printf("cloudwatchSvc: %v", cloudwatchSvc)
 
 	metricName := "NumJobsReadyOrBeingProcessed"
 	timestamp := time.Now()
@@ -220,12 +211,11 @@ func addCloudWatchMetrics(syncGwAdminUrl string) error {
 		Namespace:  &namespace,
 	}
 
-	out, err := cloudwatchSvc.PutMetricData(putMetricDataInput)
+	_, err = cloudwatchSvc.PutMetricData(putMetricDataInput)
 	if err != nil {
 		log.Printf("ERROR adding metric data  %v", err)
 		return err
 	}
-	log.Printf("Metric data output: %v", out)
 
 	return nil
 
@@ -237,8 +227,6 @@ func init() {
 	// Here you will define your flags and configuration settings
 
 	// Cobra supports Persistent Flags which will work for this command and all subcommands
-
-	publish_cloudwatch_metricsCmd.PersistentFlags().String("aws_key", "", "AWS Key")
 
 	publish_cloudwatch_metricsCmd.PersistentFlags().String("admin_url", "", "Sync Gateway Admin URL")
 
