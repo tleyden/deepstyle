@@ -85,6 +85,7 @@ func numJobsReadOrBeingProcessed(syncGwAdminUrl string) (metricValue float64, er
 
 	viewUrl := fmt.Sprintf("_design/%v/_view/%v", DesignDocName, ViewName)
 	options := map[string]interface{}{}
+	options["stale"] = "false"
 	output := map[string]interface{}{}
 	err = db.Query(viewUrl, options, &output)
 	if err != nil {
@@ -93,7 +94,16 @@ func numJobsReadOrBeingProcessed(syncGwAdminUrl string) (metricValue float64, er
 			if errInstallView := installView(rawUrl); errInstallView != nil {
 				// failed to install view, give up
 				return 0.0, errInstallView
+
 			}
+
+			// without this workaround, I'm getting:
+			// ERROR: HTTP Error 500 Internal Server Error - {"error":"Internal Server Error","reason":"Internal error: error executing view req at http://127.0.0.1:8092/deepstyle/_design/unprocessed_jobs/_view/unprocessed_jobs?stale=false: 500 Internal Server Error - {\"error\":\"unknown_error\",\"reason\":\"view_undefined\"}\n"}
+
+			log.Printf("Sleeping 10s to wait for view to be ready")
+			<-time.After(time.Duration(10) * time.Second)
+			log.Printf("Done sleeping 10s to wait for view to be ready")
+
 			// now retry
 			errInner := db.Query(viewUrl, options, &output)
 			if errInner != nil {
@@ -125,7 +135,7 @@ func installView(syncGwAdminUrl string) error {
 {
     "views":{
         "unprocessed_jobs":{
-            "map":"function (doc, meta) { if (doc.type != '{{.JobDocType}}') { return; } if (doc.state == '{{.JobState1}}' || doc.state == '{{.JobState2}}' || doc.state == '{{.JobState3}}') { emit(meta.id, meta.id); }}"
+            "map":"function (doc, meta) { if (doc.type != '{{.JobDocType}}') { return; } if (doc.state == '{{.JobState1}}' || doc.state == '{{.JobState2}}' || doc.state == '{{.JobState3}}') { emit(doc.state, meta.id); }}"
         }
     }
 }
