@@ -178,8 +178,9 @@ func addCloudWatchMetrics(syncGwAdminUrl string) error {
 		log.Printf("Adding metrics for queue")
 		addCloudWatchMetric(syncGwAdminUrl)
 
-		log.Printf("Sleeping 30s")
-		<-time.After(time.Duration(30) * time.Second)
+		numSecondsToSleep := 60
+		log.Printf("Sleeping %v seconds", numSecondsToSleep)
+		<-time.After(time.Duration(numSecondsToSleep) * time.Second)
 
 	}
 }
