@@ -1,17 +1,26 @@
 package cmd
 
 import (
+	"bytes"
 	"fmt"
 	"log"
+	"net/http"
 	"net/url"
 	"strings"
 	"time"
 
+	"github.com/alecthomas/template"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/spf13/cobra"
+	"github.com/tleyden/deepstyle/deepstylelib"
 	"github.com/tleyden/go-couch"
+)
+
+const (
+	DesignDocName = "unprocessed_jobs"
+	ViewName      = "unprocessed_jobs"
 )
 
 // publish_cloudwatch_metricsCmd respresents the publish_cloudwatch_metrics command
@@ -74,26 +83,26 @@ func numJobsReadOrBeingProcessed(syncGwAdminUrl string) (metricValue float64, er
 	}
 	log.Printf("connected to db: %v", db)
 
-	viewUrl := "_design/unprocessed_jobs/_view/unprocessed_jobs"
+	viewUrl := fmt.Sprintf("_design/%v/_view/%v", DesignDocName, ViewName)
 	options := map[string]interface{}{}
 	output := map[string]interface{}{}
 	err = db.Query(viewUrl, options, &output)
 	if err != nil {
 		if strings.Contains(err.Error(), "404") {
-
 			// the view doesn't exist yet, attempt to install view
-
+			if errInstallView := installView(rawUrl); errInstallView != nil {
+				// failed to install view, give up
+				return 0.0, errInstallView
+			}
 			// now retry
 			errInner := db.Query(viewUrl, options, &output)
 			if errInner != nil {
 				// failed again, give up
 				return 0.0, errInner
 			}
-
 		} else {
 			return 0.0, err
 		}
-
 	}
 	log.Printf("output: %+v", output)
 
@@ -101,6 +110,70 @@ func numJobsReadOrBeingProcessed(syncGwAdminUrl string) (metricValue float64, er
 	// convert to a float and return that value
 
 	return 0.0, nil
+}
+
+type ViewParams struct {
+	JobDocType string
+	JobState1  string
+	JobState2  string
+	JobState3  string
+}
+
+func installView(syncGwAdminUrl string) error {
+
+	viewJsonTemplate := `
+{
+    "views":{
+        "unprocessed_jobs":{
+            "map":"function (doc, meta) { if (doc._sync === undefined || meta.id.substring(0,6) == \"_sync:\") { return; } if (doc.type != {{.JobDocType}}) { return; } if (doc.state != {{.JobState1}}) { return; } if (doc.state != {{.JobState2}}) { return; } if (doc.state != {{.JobState3}}) { return; } emit(doc.state, meta.id); }"
+        }
+    }
+}
+`
+
+	viewParams := ViewParams{
+		JobDocType: deepstylelib.Job,
+		JobState1:  deepstylelib.StateNotReadyToProcess,
+		JobState2:  deepstylelib.StateReadyToProcess,
+		JobState3:  deepstylelib.StateBeingProcessed,
+	}
+	tmpl, err := template.New("UnprocessedJobsView").Parse(viewJsonTemplate)
+	if err != nil {
+		return err
+	}
+
+	var buffer bytes.Buffer // A Buffer needs no initialization.
+
+	err = tmpl.Execute(&buffer, viewParams)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("installView called")
+
+	// curl -X PUT -H "Content-type: application/json" localhost:4985/todolite/_design/all_lists --data @testview
+	viewUrl := fmt.Sprintf("%v/_design/%v", syncGwAdminUrl, DesignDocName)
+
+	bufferBytes := buffer.Bytes()
+	log.Printf("view: %v", string(bufferBytes))
+
+	req, err := http.NewRequest("PUT", viewUrl, bytes.NewReader(bufferBytes))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("put view resp: %v", resp)
+
+	return nil
+
 }
 
 func addCloudWatchMetrics(syncGwAdminUrl string) error {
