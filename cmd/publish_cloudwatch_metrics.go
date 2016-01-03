@@ -125,7 +125,7 @@ func installView(syncGwAdminUrl string) error {
 {
     "views":{
         "unprocessed_jobs":{
-            "map":"function (doc, meta) { if (doc._sync === undefined || meta.id.substring(0,6) == \"_sync:\") { return; } if (doc.type != {{.JobDocType}}) { return; } if (doc.state != {{.JobState1}}) { return; } if (doc.state != {{.JobState2}}) { return; } if (doc.state != {{.JobState3}}) { return; } emit(doc.state, meta.id); }"
+            "map":"function (doc, meta) { if (doc.type != {{.JobDocType}}) { return; } if (doc.state != {{.JobState1}}) { return; } if (doc.state != {{.JobState2}}) { return; } if (doc.state != {{.JobState3}}) { return; } emit(doc.state, meta.id); }"
         }
     }
 }
