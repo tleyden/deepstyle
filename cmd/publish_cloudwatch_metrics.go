@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"text/template"
 	"time"
 
-	"github.com/alecthomas/template"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
@@ -88,7 +88,7 @@ func numJobsReadOrBeingProcessed(syncGwAdminUrl string) (metricValue float64, er
 	output := map[string]interface{}{}
 	err = db.Query(viewUrl, options, &output)
 	if err != nil {
-		if strings.Contains(err.Error(), "404") {
+		if strings.Contains(err.Error(), "404") || strings.Contains(err.Error(), "not_found") {
 			// the view doesn't exist yet, attempt to install view
 			if errInstallView := installView(rawUrl); errInstallView != nil {
 				// failed to install view, give up
