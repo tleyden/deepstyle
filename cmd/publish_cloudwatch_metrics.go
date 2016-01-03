@@ -3,13 +3,15 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"net/url"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
-	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/spf13/cobra"
+	"github.com/tleyden/go-couch"
 )
 
 // publish_cloudwatch_metricsCmd respresents the publish_cloudwatch_metrics command
@@ -34,61 +36,117 @@ var publish_cloudwatch_metricsCmd = &cobra.Command{
 			return
 		}
 
-		svc := ec2.New(session.New(), &aws.Config{Region: aws.String("us-east-1")})
+		urlFlag := cmd.Flag("admin_url")
 
-		// Call the DescribeInstances Operation
-		resp, err := svc.DescribeInstances(nil)
-		if err != nil {
-			panic(err)
-		}
-
-		// resp has all of the response data, pull out instance IDs:
-		fmt.Println("> Number of reservation sets: ", len(resp.Reservations))
-		for idx, res := range resp.Reservations {
-			fmt.Println("  > Number of instances: ", len(res.Instances))
-			for _, inst := range resp.Reservations[idx].Instances {
-				fmt.Println("    - Instance ID: ", *inst.InstanceId)
-				fmt.Println("    - Key Name: ", *inst.KeyName)
-			}
-		}
-
-		// TODO: push something to CloudWatch
-		// CLI example:
-		//   aws cloudwatch put-metric-data
-		//     --metric-name PageViewCount
-		//      --namespace "MyService"
-		//     --value 2
-		//     --timestamp 2014-02-14T12:00:00.000Z
-		cloudwatchSvc := cloudwatch.New(session.New(), &aws.Config{Region: aws.String("us-east-1")})
-
-		log.Printf("cloudwatchSvc: %v", cloudwatchSvc)
-
-		metricName := "NumJobsReadyOrBeingProcessed"
-		metricValue := 0.0
-		timestamp := time.Now()
-
-		metricDatum := &cloudwatch.MetricDatum{
-			MetricName: &metricName,
-			Value:      &metricValue,
-			Timestamp:  &timestamp,
-		}
-
-		metricDatumSlice := []*cloudwatch.MetricDatum{metricDatum}
-		namespace := "DeepStyleQueue"
-
-		putMetricDataInput := &cloudwatch.PutMetricDataInput{
-			MetricData: metricDatumSlice,
-			Namespace:  &namespace,
-		}
-
-		out, err := cloudwatchSvc.PutMetricData(putMetricDataInput)
-		if err != nil {
-			log.Printf("ERROR adding metric data  %v", err)
+		urlVal := urlFlag.Value.String()
+		if urlVal == "" {
+			log.Printf("ERROR: Missing: --url.\n  %v", cmd.UsageString())
 			return
 		}
-		log.Printf("Metric data output: %v", out)
+
+		err := addCloudWatchMetrics(urlVal)
+		if err != nil {
+			log.Printf("ERROR: %v", err)
+			return
+		}
 
 	},
+}
+
+func numJobsReadOrBeingProcessed(syncGwAdminUrl string) (metricValue float64, err error) {
+
+	// try to query view
+	//    curl localhost:4985/deepstyle/_design/unprocessed_jobs/_view/unprocessed_jobs
+	// if we get a 404, then install the view and then requery
+
+	// if it has a trailing slash, remove it
+	rawUrl := strings.TrimSuffix(syncGwAdminUrl, "/")
+
+	// url validation
+	url, err := url.Parse(rawUrl)
+	if err != nil {
+		return 0.0, err
+	}
+
+	db, err := couch.Connect(url.String())
+	if err != nil {
+		return 0.0, fmt.Errorf("Error connecting to db: %v.  Err: %v", syncGwAdminUrl, err)
+	}
+	log.Printf("connected to db: %v", db)
+
+	viewUrl := "_design/unprocessed_jobs/_view/unprocessed_jobs"
+	options := map[string]interface{}{}
+	output := map[string]interface{}{}
+	err = db.Query(viewUrl, options, &output)
+	if err != nil {
+		if strings.Contains(err.Error(), "404") {
+
+			// the view doesn't exist yet, attempt to install view
+
+			// now retry
+			errInner := db.Query(viewUrl, options, &output)
+			if errInner != nil {
+				// failed again, give up
+				return 0.0, errInner
+			}
+
+		} else {
+			return 0.0, err
+		}
+
+	}
+	log.Printf("output: %+v", output)
+
+	// TODO: count the number of rows / keys in the output and
+	// convert to a float and return that value
+
+	return 0.0, nil
+}
+
+func addCloudWatchMetrics(syncGwAdminUrl string) error {
+
+	metricValue, err := numJobsReadOrBeingProcessed(syncGwAdminUrl)
+	if err != nil {
+		return err
+	}
+
+	// TODO: push something to CloudWatch
+	// CLI example:
+	//   aws cloudwatch put-metric-data
+	//     --metric-name PageViewCount
+	//      --namespace "MyService"
+	//     --value 2
+	//     --timestamp 2014-02-14T12:00:00.000Z
+	cloudwatchSvc := cloudwatch.New(session.New(), &aws.Config{Region: aws.String("us-east-1")})
+
+	log.Printf("cloudwatchSvc: %v", cloudwatchSvc)
+
+	metricName := "NumJobsReadyOrBeingProcessed"
+	timestamp := time.Now()
+
+	metricDatum := &cloudwatch.MetricDatum{
+		MetricName: &metricName,
+		Value:      &metricValue,
+		Timestamp:  &timestamp,
+	}
+
+	metricDatumSlice := []*cloudwatch.MetricDatum{metricDatum}
+	namespace := "DeepStyleQueue"
+
+	putMetricDataInput := &cloudwatch.PutMetricDataInput{
+		MetricData: metricDatumSlice,
+		Namespace:  &namespace,
+	}
+
+	out, err := cloudwatchSvc.PutMetricData(putMetricDataInput)
+	if err != nil {
+		log.Printf("ERROR adding metric data  %v", err)
+		return err
+	}
+	log.Printf("Metric data output: %v", out)
+
+	return nil
+
 }
 
 func init() {
@@ -99,6 +157,8 @@ func init() {
 	// Cobra supports Persistent Flags which will work for this command and all subcommands
 
 	publish_cloudwatch_metricsCmd.PersistentFlags().String("aws_key", "", "AWS Key")
+
+	publish_cloudwatch_metricsCmd.PersistentFlags().String("admin_url", "", "Sync Gateway Admin URL")
 
 	// Cobra supports local flags which will only run when this command is called directly
 	// publish_cloudwatch_metricsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle" )
