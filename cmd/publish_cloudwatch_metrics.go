@@ -62,7 +62,7 @@ var publish_cloudwatch_metricsCmd = &cobra.Command{
 	},
 }
 
-func numJobsReadOrBeingProcessed(syncGwAdminUrl string) (metricValue float64, err error) {
+func numJobsReadyOrBeingProcessed(syncGwAdminUrl string) (metricValue float64, err error) {
 
 	// try to query view
 	//    curl localhost:4985/deepstyle/_design/unprocessed_jobs/_view/unprocessed_jobs
@@ -115,11 +115,9 @@ func numJobsReadOrBeingProcessed(syncGwAdminUrl string) (metricValue float64, er
 		}
 	}
 	log.Printf("output: %+v", output)
+	outputRows := output["total_rows"].(float64)
+	return float64(outputRows), nil
 
-	// TODO: count the number of rows / keys in the output and
-	// convert to a float and return that value
-
-	return 0.0, nil
 }
 
 type ViewParams struct {
@@ -188,7 +186,8 @@ func installView(syncGwAdminUrl string) error {
 
 func addCloudWatchMetrics(syncGwAdminUrl string) error {
 
-	metricValue, err := numJobsReadOrBeingProcessed(syncGwAdminUrl)
+	metricValue, err := numJobsReadyOrBeingProcessed(syncGwAdminUrl)
+	log.Printf("numJobsReadyOrBeingProcessed: %v", metricValue)
 	if err != nil {
 		return err
 	}
