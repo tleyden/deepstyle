@@ -49,6 +49,15 @@ type JobDocument struct {
 	config       configuration
 }
 
+func NewJobDocument(documentId string, config configuration) (jobDocument *JobDocument, err error) {
+	jobDocument = &JobDocument{
+		config: config,
+	}
+	jobDocument.Id = documentId
+	err = jobDocument.RefreshFromDB()
+	return jobDocument, err
+}
+
 func (doc JobDocument) IsReadyToProcess() bool {
 	return doc.State == StateReadyToProcess
 }

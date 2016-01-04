@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"net/url"
 	"strings"
 
 	"github.com/couchbaselabs/logg"
@@ -24,35 +23,22 @@ import (
 */
 
 type ChangesFeedFollower struct {
-	SyncGatewayUrl *url.URL
-	Database       couch.Database
+	Database couch.Database
 }
 
 func NewChangesFeedFollower(syncGatewayUrl string) (*ChangesFeedFollower, error) {
 
-	// if it has a trailing slash, remove it
-	rawUrl := strings.TrimSuffix(syncGatewayUrl, "/")
-
-	// url validation
-	url, err := url.Parse(rawUrl)
-	if err != nil {
-		return nil, err
-	}
-
-	db, err := couch.Connect(url.String())
+	db, err := GetDbConnection(syncGatewayUrl)
 	if err != nil {
 		return nil, fmt.Errorf("Error connecting to db: %v.  Err: %v", syncGatewayUrl, err)
 	}
 
 	return &ChangesFeedFollower{
-		SyncGatewayUrl: url,
-		Database:       db,
+		Database: db,
 	}, nil
 }
 
 func (f ChangesFeedFollower) Follow() {
-
-	log.Printf("Follow feed: %v", f.SyncGatewayUrl)
 
 	var since interface{}
 

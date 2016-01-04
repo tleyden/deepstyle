@@ -2,9 +2,28 @@ package deepstylelib
 
 import (
 	"io"
+	"net/url"
 	"os"
 	"os/exec"
+	"strings"
+
+	"github.com/tleyden/go-couch"
 )
+
+func GetDbConnection(syncGatewayUrl string) (db couch.Database, err error) {
+
+	// if it has a trailing slash, remove it
+	rawUrl := strings.TrimSuffix(syncGatewayUrl, "/")
+
+	// url validation
+	url, err := url.Parse(rawUrl)
+	if err != nil {
+		return couch.Database{}, err
+	}
+
+	return couch.Connect(url.String())
+
+}
 
 func writeToFile(reader io.Reader, destFilename string) error {
 

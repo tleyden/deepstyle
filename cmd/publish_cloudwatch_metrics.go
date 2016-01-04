@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
 	"strings"
 	"text/template"
 	"time"
@@ -15,7 +14,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/spf13/cobra"
 	"github.com/tleyden/deepstyle/deepstylelib"
-	"github.com/tleyden/go-couch"
 )
 
 const (
@@ -54,35 +52,60 @@ var publish_cloudwatch_metricsCmd = &cobra.Command{
 
 func numJobsReadyOrBeingProcessed(syncGwAdminUrl string) (metricValue float64, err error) {
 
+	viewResults, err := getJobsReadyOrBeingProcessed(syncGwAdminUrl)
+	if err != nil {
+		return 0.0, err
+	}
+	numRows := viewResults["total_rows"].(float64)
+	return float64(numRows), nil
+
+}
+
+func getJobDocsBeingProcessed(syncGwAdminUrl string) (jobs []deepstylelib.JobDocument, err error) {
+
+	viewResults, err := getJobsReadyOrBeingProcessed(syncGwAdminUrl)
+	if err != nil {
+		return jobs, err
+	}
+	rows := viewResults["rows"].([]interface{})
+	log.Printf("rows: %+v", rows)
+	for _, row := range rows {
+		log.Printf("row: %+v type: %T", row, row)
+		rowMap := row.(map[string]interface{})
+		docId := rowMap["id"].(string)
+		log.Printf("id: %v", docId)
+
+		// TODO: get configuration with database
+		// jobDoc := NewJobDocument(
+	}
+	return jobs, nil
+
+}
+
+func getJobsReadyOrBeingProcessed(syncGwAdminUrl string) (viewResults map[string]interface{}, err error) {
+
 	// try to query view
 	//    curl localhost:4985/deepstyle/_design/unprocessed_jobs/_view/unprocessed_jobs
 	// if we get a 404, then install the view and then requery
 
-	// if it has a trailing slash, remove it
-	rawUrl := strings.TrimSuffix(syncGwAdminUrl, "/")
+	output := map[string]interface{}{}
 
-	// url validation
-	url, err := url.Parse(rawUrl)
+	db, err := deepstylelib.GetDbConnection(syncGatewayUrl)
 	if err != nil {
-		return 0.0, err
-	}
-
-	db, err := couch.Connect(url.String())
-	if err != nil {
-		return 0.0, fmt.Errorf("Error connecting to db: %v.  Err: %v", syncGwAdminUrl, err)
+		return output, fmt.Errorf("Error connecting to db: %v.  Err: %v", syncGatewayUrl, err)
 	}
 
 	viewUrl := fmt.Sprintf("_design/%v/_view/%v", DesignDocName, ViewName)
 	options := map[string]interface{}{}
 	options["stale"] = "false"
-	output := map[string]interface{}{}
+
 	err = db.Query(viewUrl, options, &output)
 	if err != nil {
 		if strings.Contains(err.Error(), "404") || strings.Contains(err.Error(), "not_found") {
 			// the view doesn't exist yet, attempt to install view
 			if errInstallView := installView(rawUrl); errInstallView != nil {
 				// failed to install view, give up
-				return 0.0, errInstallView
+				return output, errInstallView
 
 			}
 
@@ -97,14 +120,13 @@ func numJobsReadyOrBeingProcessed(syncGwAdminUrl string) (metricValue float64, e
 			errInner := db.Query(viewUrl, options, &output)
 			if errInner != nil {
 				// failed again, give up
-				return 0.0, errInner
+				return output, errInner
 			}
 		} else {
-			return 0.0, err
+			return output, err
 		}
 	}
-	outputRows := output["total_rows"].(float64)
-	return float64(outputRows), nil
+	return output, nil
 
 }
 
@@ -174,6 +196,12 @@ func installView(syncGwAdminUrl string) error {
 
 func addCloudWatchMetrics(syncGwAdminUrl string) error {
 	for {
+
+		jobs, err := getJobDocsBeingProcessed(syncGwAdminUrl)
+		if err != nil {
+			log.Printf("err: %v", err)
+		}
+		log.Printf("jobs: %v", jobs)
 
 		log.Printf("Adding metrics for queue")
 		addCloudWatchMetric(syncGwAdminUrl)
