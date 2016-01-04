@@ -19,6 +19,17 @@ const (
 	ViewName      = "unprocessed_jobs"
 )
 
+// Adds a time when we first saw this job in it's current state
+// so that we can detect "stuck" jobs that never get processed.
+type TrackedDeepStyleJob struct {
+	firstSeen time.Time
+	jobDoc    JobDocument
+}
+
+// Keep a map of jobs we are tracking to see if they are "stuck".
+// Key is the job id and the value is the job with timestamp metadata
+var trackedJobs map[string]TrackedDeepStyleJob = map[string]TrackedDeepStyleJob{}
+
 func numJobsReadyOrBeingProcessed(syncGwAdminUrl string) (metricValue float64, err error) {
 
 	viewResults, err := getJobsReadyOrBeingProcessed(syncGwAdminUrl)
@@ -48,26 +59,20 @@ func getJobDocsBeingProcessed(syncGwAdminUrl string) (jobs []JobDocument, err er
 		return jobs, err
 	}
 	rows := viewResults["rows"].([]interface{})
-	log.Printf("rows: %+v", rows)
 	for _, row := range rows {
-		log.Printf("row: %+v type: %T", row, row)
 		rowMap := row.(map[string]interface{})
 		docId := rowMap["id"].(string)
-		log.Printf("id: %v", docId)
-
-		// TODO: get configuration with database
 		jobDoc, err := NewJobDocument(docId, config)
 		if err != nil {
 			log.Printf("Error %v retrieving job doc: %v, skipping", err, docId)
 			continue
 		}
-		jobs = append(jobs, *jobDoc)
-
-		log.Printf("job doc: %+v", jobDoc)
+		if jobDoc.State == StateBeingProcessed {
+			jobs = append(jobs, *jobDoc)
+		}
 
 	}
 
-	log.Printf("returning %v jobs", len(jobs))
 	return jobs, nil
 
 }
@@ -187,14 +192,63 @@ func installView(syncGwAdminUrl string) error {
 
 }
 
+func resetStuckJobs(jobs []JobDocument) error {
+
+	for _, job := range jobs {
+
+		// have we seen it before?
+		trackedJob, ok := trackedJobs[job.Id]
+		if !ok {
+			log.Printf("Tracking job %v which is currently being processed", job.Id)
+			// no -- add to jobTracker map with a first_seen timestamp
+			trackedJobInsert := TrackedDeepStyleJob{
+				jobDoc:    job,
+				firstSeen: time.Now(),
+			}
+			trackedJobs[job.Id] = trackedJobInsert
+			continue
+		}
+
+		// yes, we've seen it before.  is first_seen more than an hour old?
+		duration := time.Since(trackedJob.firstSeen)
+		if duration.Minutes() >= 60 {
+			// over an hour old, reset job state
+
+			log.Printf("Job %v has been stuck for over an hour.  Resetting state to %v", job.Id, StateReadyToProcess)
+
+			updated, err := job.UpdateState(StateReadyToProcess)
+			if !updated {
+				log.Printf("Unable to update job state for job: %v", job.Id)
+			}
+			if err != nil {
+				log.Printf("Unable to update job state for job: %v.  Error: %v", job.Id, err)
+				continue
+			}
+			// remove the job from the job tracker map since state changed
+			delete(trackedJobs, job.Id)
+
+		} else {
+			log.Printf("Job %v has been processing for %v minutes", job.Id, duration.Minutes())
+		}
+
+	}
+	return nil
+}
+
 func AddCloudWatchMetrics(syncGwAdminUrl string) error {
 	for {
 
 		jobs, err := getJobDocsBeingProcessed(syncGwAdminUrl)
 		if err != nil {
-			log.Printf("err: %v", err)
+			log.Printf("Error getting jobs being processed: %v", err)
+			return err
 		}
-		log.Printf("jobs: %v", jobs)
+
+		err = resetStuckJobs(jobs)
+		if err != nil {
+			log.Printf("Error resetting stuck jobs: %v", err)
+			return err
+		}
 
 		log.Printf("Adding metrics for queue")
 		addCloudWatchMetric(syncGwAdminUrl)
