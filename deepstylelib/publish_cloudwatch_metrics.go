@@ -2,6 +2,7 @@ package deepstylelib
 
 import (
 	"bytes"
+	_ "expvar"
 	"fmt"
 	"log"
 	"net/http"
@@ -236,6 +237,7 @@ func resetStuckJobs(jobs []JobDocument) error {
 }
 
 func AddCloudWatchMetrics(syncGwAdminUrl string) error {
+
 	for {
 
 		jobs, err := getJobDocsBeingProcessed(syncGwAdminUrl)
@@ -258,6 +260,7 @@ func AddCloudWatchMetrics(syncGwAdminUrl string) error {
 		<-time.After(time.Duration(numSecondsToSleep) * time.Second)
 
 	}
+
 }
 
 func addCloudWatchMetric(syncGwAdminUrl string) error {
