@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	_ "expvar"
 	"log"
+	"net/http"
 
 	"github.com/spf13/cobra"
 	"github.com/tleyden/deepstyle/deepstylelib"
@@ -32,6 +34,10 @@ var publish_cloudwatch_metricsCmd = &cobra.Command{
 			log.Printf("ERROR: %v", err)
 			return
 		}
+
+		go func() {
+			log.Fatal(http.ListenAndServe(":4980", nil))
+		}()
 
 	},
 }

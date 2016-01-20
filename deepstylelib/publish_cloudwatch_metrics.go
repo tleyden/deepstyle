@@ -2,7 +2,6 @@ package deepstylelib
 
 import (
 	"bytes"
-	_ "expvar"
 	"fmt"
 	"log"
 	"net/http"
