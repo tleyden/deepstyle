@@ -29,15 +29,15 @@ var publish_cloudwatch_metricsCmd = &cobra.Command{
 			return
 		}
 
+		go func() {
+			log.Fatal(http.ListenAndServe(":4980", nil))
+		}()
+
 		err := deepstylelib.AddCloudWatchMetrics(urlVal)
 		if err != nil {
 			log.Printf("ERROR: %v", err)
 			return
 		}
-
-		go func() {
-			log.Fatal(http.ListenAndServe(":4980", nil))
-		}()
 
 	},
 }
