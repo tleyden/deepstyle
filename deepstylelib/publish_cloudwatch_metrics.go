@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	DesignDocName = "unprocessed_jobs"
-	ViewName      = "unprocessed_jobs"
+	DesignDocName = "unprocessed_jobs2"
+	ViewName      = "unprocessed_jobs2"
 )
 
 // Adds a time when we first saw this job in it's current state
