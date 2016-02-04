@@ -1,7 +1,14 @@
 
 ## Overview
 
-DeepStyle in the cloud
+This is the backend for the [deepstyle-ios](https://github.com/tleyden/deepstyle-ios/) app
+
+* Sync Gateway changes listener to track the number of unprocessed jobs
+* When new jobs are detected, publishes stats to CloudWatch
+* CloudWatch Alarms cause AWS EC2 instances with GPU processors to spin up
+    * Look for unprocessed jobs
+    * Invoke [neural-style](https://github.com/jcjohnson/neural-style) to apply the artistic style to the photograph
+    * Update job with results, which will sync down to the [deepstyle-ios](https://github.com/tleyden/deepstyle-ios/) app
 
 ## Steps to run
 
