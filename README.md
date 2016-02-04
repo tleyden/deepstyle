@@ -1,7 +1,9 @@
 
 ## Overview
 
-This is the backend "changes worker" for the [deepstyle-ios](https://github.com/tleyden/deepstyle-ios/) app.  [Sync Gateway](https://waffle.io/couchbase/sync_gateway) provides the REST api, and [Couchbase Server](https://github.com/couchbase/manifest) provides the persistence layer.
+This is the backend "changes worker" for the [deepstyle-ios](https://github.com/tleyden/deepstyle-ios/) app.  
+
+[Sync Gateway](https://waffle.io/couchbase/sync_gateway) provides the REST api, and [Couchbase Server](https://github.com/couchbase/manifest) provides the persistence layer.
 
 * Sync Gateway changes listener to track the number of unprocessed jobs
 * When new jobs are detected, publishes stats to CloudWatch
