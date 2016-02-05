@@ -5,7 +5,7 @@
     <databaseInfo>
         <version>134481920</version>
         <UUID>796F35DA-1F73-490C-98C5-F78C938D6541</UUID>
-        <nextObjectID>132</nextObjectID>
+        <nextObjectID>154</nextObjectID>
         <metadata>
             <plist version="1.0">
                 <dict>
@@ -65,7 +65,7 @@
         <attribute name="order" type="int64">0</attribute>
         <attribute name="name" type="string">HOST</attribute>
         <relationship name="domain" type="0/1" destination="LMENVIRONMENTDOMAIN" idrefs="z132"></relationship>
-        <relationship name="values" type="0/0" destination="LMENVIRONMENTVARIABLEVALUE" idrefs="z123"></relationship>
+        <relationship name="values" type="0/0" destination="LMENVIRONMENTVARIABLEVALUE" idrefs="z123 z139 z144"></relationship>
     </object>
     <object type="LMENVIRONMENTVARIABLEVALUE" id="z103">
         <attribute name="value" type="string">deepstyle</attribute>
@@ -94,15 +94,15 @@
     </object>
     <object type="LMREQUEST" id="z106">
         <attribute name="uuid" type="string">E44EA136-9A32-4916-97E1-002FD602C1A2</attribute>
-        <attribute name="url" type="string">["http:\\/\\/",{"data":{"environmentVariable":"B8402246-5C2F-45A9-9A6D-A10448CF85B1"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},":",{"data":{"environmentVariable":"8445917B-130D-402D-877F-AFAE8F614FAA"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/",{"data":{"environmentVariable":"962AE993-2FB4-4EB7-8BBE-7FF04B2F33C4"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/",{"data":{"environmentVariable":"DA37B8C1-21A1-4FA2-9C9C-0C7F7D804888"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/style_image?rev=2-31965e29ad44a16dc99da9fdc2fc89b2"]</attribute>
+        <attribute name="url" type="string">["http:\\/\\/",{"data":{"environmentVariable":"B8402246-5C2F-45A9-9A6D-A10448CF85B1"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},":",{"data":{"environmentVariable":"8445917B-130D-402D-877F-AFAE8F614FAA"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/",{"data":{"environmentVariable":"962AE993-2FB4-4EB7-8BBE-7FF04B2F33C4"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/",{"data":{"environmentVariable":"DA37B8C1-21A1-4FA2-9C9C-0C7F7D804888"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/style_image?rev=2-19cce77451ec01085b16c951db3107de"]</attribute>
         <attribute name="storecookies" type="bool">1</attribute>
         <attribute name="sendcookies" type="bool">1</attribute>
         <attribute name="redirectmethod" type="bool">0</attribute>
         <attribute name="redirectauthorization" type="bool">0</attribute>
         <attribute name="method" type="string">PUT</attribute>
         <attribute name="followredirects" type="bool">0</attribute>
-        <attribute name="body" type="string">[{"data":{"bookmarkData":"Ym9va8ACAAAAAAQQMAAAAIFt8wz0rZ7ZHLL+R51vOt148rSlmTcF3V2fHc0Co9ACvAEAAAQAAAADAwAAABgAKAUAAAABAQAAVXNlcnMAAAAHAAAAAQEAAHRsZXlkZW4ABwAAAAEBAABEZXNrdG9wABEAAAABAQAAYW5kcmVhX2ZpZWxkLmpwZWcAAAAQAAAAAQYAABAAAAAgAAAAMAAAAEAAAAAIAAAABAMAADWYAgAAAAAACAAAAAQDAAA6fgoAAAAAAAgAAAAEAwAA3lUNAAAAAAAIAAAABAMAALndqAEAAAAAEAAAAAEGAAB0AAAAhAAAAJQAAACkAAAACAAAAAAEAABBvAeTuQAAABgAAAABAgAAAQAAAAAAAAAPAAAAAAAAAAAAAAAAAAAACAAAAAQDAAACAAAAAAAAAAQAAAADAwAA9gEAAAgAAAABCQAAZmlsZTovLy8MAAAAAQEAAE1hY2ludG9zaCBIRAgAAAAEAwAAAAAAMnQAAAAIAAAAAAQAAEG62d0vAAAAJAAAAAEBAAAyQjg4QUU2My05QTZGLTMyOUUtODgyMC1GMjRCQUIyMzNBQkEYAAAAAQIAAIEAAAABAAgA7xcAAAEACAAAAAAAAAAAAAEAAAABAQAALwAAAAAAAAABBQAAzAAAAP7\\/\\/\\/8BAAAAAAAAABAAAAAEEAAAXAAAAAAAAAAFEAAAtAAAAAAAAAAQEAAA3AAAAAAAAABAEAAAzAAAAAAAAAACIAAAqAEAAAAAAAAFIAAAGAEAAAAAAAAQIAAAKAEAAAAAAAARIAAAXAEAAAAAAAASIAAAPAEAAAAAAAATIAAATAEAAAAAAAAgIAAAiAEAAAAAAAAwIAAAtAEAAAAAAAABwAAA\\/AAAAAAAAAARwAAAIAAAAAAAAAASwAAADAEAAAAAAAAQ0AAABAAAAAAAAAA="},"identifier":"com.luckymarmot.FileContentDynamicValue"}]</attribute>
-        <attribute name="order" type="int64">2</attribute>
+        <attribute name="body" type="string">[{"data":{"bookmarkData":"Ym9va8wCAAAAAAQQMAAAAN6khUch6ZFJfGu4xjHQHNeRCrz4\\/FqFSk+z+CFXvskfyAEAAAQAAAADAwAAABgAKAUAAAABAQAAVXNlcnMAAAAHAAAAAQEAAHRsZXlkZW4ABwAAAAEBAABEZXNrdG9wAB4AAAABAQAAcGljYXNzby1naXJsLWJlZm9yZS1taXJyb3IuanBnAAAQAAAAAQYAABAAAAAgAAAAMAAAAEAAAAAIAAAABAMAADWYAgAAAAAACAAAAAQDAAA6fgoAAAAAAAgAAAAEAwAA3lUNAAAAAAAIAAAABAMAAJ4TwAEAAAAAEAAAAAEGAACAAAAAkAAAAKAAAACwAAAACAAAAAAEAABBvBanPwAAABgAAAABAgAAAQAAAAAAAAAPAAAAAAAAAAAAAAAAAAAACAAAAAQDAAACAAAAAAAAAAQAAAADAwAA9gEAAAgAAAABCQAAZmlsZTovLy8MAAAAAQEAAE1hY2ludG9zaCBIRAgAAAAEAwAAAAAAMnQAAAAIAAAAAAQAAEG62d0vAAAAJAAAAAEBAAAyQjg4QUU2My05QTZGLTMyOUUtODgyMC1GMjRCQUIyMzNBQkEYAAAAAQIAAIEAAAABAAgA7xcAAAEACAAAAAAAAAAAAAEAAAABAQAALwAAAAAAAAABBQAAzAAAAP7\\/\\/\\/8BAAAAAAAAABAAAAAEEAAAaAAAAAAAAAAFEAAAwAAAAAAAAAAQEAAA6AAAAAAAAABAEAAA2AAAAAAAAAACIAAAtAEAAAAAAAAFIAAAJAEAAAAAAAAQIAAANAEAAAAAAAARIAAAaAEAAAAAAAASIAAASAEAAAAAAAATIAAAWAEAAAAAAAAgIAAAlAEAAAAAAAAwIAAAwAEAAAAAAAABwAAACAEAAAAAAAARwAAAIAAAAAAAAAASwAAAGAEAAAAAAAAQ0AAABAAAAAAAAAA="},"identifier":"com.luckymarmot.FileContentDynamicValue"}]</attribute>
+        <attribute name="order" type="int64">3</attribute>
         <attribute name="name" type="string">Add Job StyleImage Attachment</attribute>
         <relationship name="parent" type="0/1" destination="LMREQUESTTREEITEM"></relationship>
         <relationship name="children" type="0/0" destination="LMREQUESTTREEITEM"></relationship>
@@ -130,7 +130,7 @@
     </object>
     <object type="LMREQUEST" id="z109">
         <attribute name="uuid" type="string">75277DB7-CDE2-4B3B-BA61-0B5470DAED91</attribute>
-        <attribute name="url" type="string">["http:\\/\\/",{"data":{"environmentVariable":"B8402246-5C2F-45A9-9A6D-A10448CF85B1"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},":",{"data":{"environmentVariable":"8445917B-130D-402D-877F-AFAE8F614FAA"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/",{"data":{"environmentVariable":"962AE993-2FB4-4EB7-8BBE-7FF04B2F33C4"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/",{"data":{"environmentVariable":"DA37B8C1-21A1-4FA2-9C9C-0C7F7D804888"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"?rev=8-d5af42682cacbd68efadf48f876fdcbf"]</attribute>
+        <attribute name="url" type="string">["http:\\/\\/",{"data":{"environmentVariable":"B8402246-5C2F-45A9-9A6D-A10448CF85B1"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},":",{"data":{"environmentVariable":"8445917B-130D-402D-877F-AFAE8F614FAA"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/",{"data":{"environmentVariable":"962AE993-2FB4-4EB7-8BBE-7FF04B2F33C4"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/-Q4Z0IviJbwtPdPGFEzzqPz?rev=1-00568af030d4ddd4370b70db96de0bc7"]</attribute>
         <attribute name="storecookies" type="bool">1</attribute>
         <attribute name="sendcookies" type="bool">1</attribute>
         <attribute name="redirectmethod" type="bool">0</attribute>
@@ -138,14 +138,14 @@
         <attribute name="method" type="string">DELETE</attribute>
         <attribute name="followredirects" type="bool">0</attribute>
         <attribute name="body" type="string">[{"data":{"json":"{}"},"identifier":"com.luckymarmot.JSONDynamicValue"}]</attribute>
-        <attribute name="order" type="int64">8</attribute>
+        <attribute name="order" type="int64">11</attribute>
         <attribute name="name" type="string">Delete Job</attribute>
         <relationship name="parent" type="0/1" destination="LMREQUESTTREEITEM"></relationship>
         <relationship name="children" type="0/0" destination="LMREQUESTTREEITEM"></relationship>
         <relationship name="headers" type="0/0" destination="LMKEYVALUE" idrefs="z104"></relationship>
     </object>
     <object type="LMENVIRONMENTVARIABLEVALUE" id="z110">
-        <attribute name="value" type="string">job24</attribute>
+        <attribute name="value" type="string">-nMA2lurG15-MmHQwcq5Nov</attribute>
         <relationship name="environment" type="1/1" destination="LMENVIRONMENT" idrefs="z112"></relationship>
         <relationship name="variable" type="1/1" destination="LMENVIRONMENTVARIABLE" idrefs="z124"></relationship>
     </object>
@@ -162,9 +162,9 @@
     <object type="LMENVIRONMENT" id="z112">
         <attribute name="uuid" type="string">7B75B2E8-4DAA-4566-B2B3-68422684A760</attribute>
         <attribute name="order" type="int64">0</attribute>
-        <attribute name="name" type="string">Default Environment</attribute>
+        <attribute name="name" type="string">demo cbmobile</attribute>
         <relationship name="domain" type="0/1" destination="LMENVIRONMENTDOMAIN" idrefs="z132"></relationship>
-        <relationship name="variablesvalues" type="0/0" destination="LMENVIRONMENTVARIABLEVALUE" idrefs="z127 z103 z110 z123"></relationship>
+        <relationship name="variablesvalues" type="0/0" destination="LMENVIRONMENTVARIABLEVALUE" idrefs="z135 z103 z127 z123 z110"></relationship>
     </object>
     <object type="LMREQUEST" id="z113">
         <attribute name="uuid" type="string">D2B5762A-B3DD-4C3B-81B6-1E1A2CED75C7</attribute>
@@ -175,8 +175,8 @@
         <attribute name="redirectauthorization" type="bool">0</attribute>
         <attribute name="method" type="string">POST</attribute>
         <attribute name="followredirects" type="bool">0</attribute>
-        <attribute name="body" type="string">[{"data":{"json":"{\\"state\\":\\"READY_TO_PROCESS\\",\\"_id\\":\\"job24\\",\\"type\\":\\"job\\"}"},"identifier":"com.luckymarmot.JSONDynamicValue"}]</attribute>
-        <attribute name="order" type="int64">0</attribute>
+        <attribute name="body" type="string">[{"data":{"json":"{\\"state\\":\\"NOT_READY_TO_PROCESS\\",\\"_id\\":\\"job33\\",\\"type\\":\\"job\\"}"},"identifier":"com.luckymarmot.JSONDynamicValue"}]</attribute>
+        <attribute name="order" type="int64">1</attribute>
         <attribute name="name" type="string">Create Job</attribute>
         <relationship name="parent" type="0/1" destination="LMREQUESTTREEITEM"></relationship>
         <relationship name="children" type="0/0" destination="LMREQUESTTREEITEM"></relationship>
@@ -184,7 +184,7 @@
     </object>
     <object type="LMREQUEST" id="z114">
         <attribute name="uuid" type="string">2E5C8142-6358-4FA6-BA14-F87A5D362411</attribute>
-        <attribute name="url" type="string">["http:\\/\\/",{"data":{"environmentVariable":"B8402246-5C2F-45A9-9A6D-A10448CF85B1"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},":",{"data":{"environmentVariable":"8445917B-130D-402D-877F-AFAE8F614FAA"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/",{"data":{"environmentVariable":"962AE993-2FB4-4EB7-8BBE-7FF04B2F33C4"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/",{"data":{"environmentVariable":"DA37B8C1-21A1-4FA2-9C9C-0C7F7D804888"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"}]</attribute>
+        <attribute name="url" type="string">["http:\\/\\/",{"data":{"environmentVariable":"B8402246-5C2F-45A9-9A6D-A10448CF85B1"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},":",{"data":{"environmentVariable":"8445917B-130D-402D-877F-AFAE8F614FAA"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/",{"data":{"environmentVariable":"962AE993-2FB4-4EB7-8BBE-7FF04B2F33C4"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/-WzNiTGu8_no-bGqHLk8S8M"]</attribute>
         <attribute name="storecookies" type="bool">1</attribute>
         <attribute name="sendcookies" type="bool">1</attribute>
         <attribute name="redirectmethod" type="bool">0</attribute>
@@ -192,7 +192,7 @@
         <attribute name="method" type="string">GET</attribute>
         <attribute name="followredirects" type="bool">0</attribute>
         <attribute name="body" type="string">[{"data":{"json":"{}"},"identifier":"com.luckymarmot.JSONDynamicValue"}]</attribute>
-        <attribute name="order" type="int64">5</attribute>
+        <attribute name="order" type="int64">8</attribute>
         <attribute name="name" type="string">Get Job</attribute>
         <relationship name="parent" type="0/1" destination="LMREQUESTTREEITEM"></relationship>
         <relationship name="children" type="0/0" destination="LMREQUESTTREEITEM"></relationship>
@@ -200,7 +200,7 @@
     </object>
     <object type="LMREQUEST" id="z115">
         <attribute name="uuid" type="string">E21A3FDD-DD19-46E8-AE54-42CE675415F0</attribute>
-        <attribute name="url" type="string">["http:\\/\\/",{"data":{"environmentVariable":"B8402246-5C2F-45A9-9A6D-A10448CF85B1"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},":",{"data":{"environmentVariable":"8445917B-130D-402D-877F-AFAE8F614FAA"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/",{"data":{"environmentVariable":"962AE993-2FB4-4EB7-8BBE-7FF04B2F33C4"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/",{"data":{"environmentVariable":"DA37B8C1-21A1-4FA2-9C9C-0C7F7D804888"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/result_image?rev=6-91ea9e5942f32da311ab05f838297268"]</attribute>
+        <attribute name="url" type="string">["http:\\/\\/",{"data":{"environmentVariable":"B8402246-5C2F-45A9-9A6D-A10448CF85B1"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},":",{"data":{"environmentVariable":"8445917B-130D-402D-877F-AFAE8F614FAA"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/",{"data":{"environmentVariable":"962AE993-2FB4-4EB7-8BBE-7FF04B2F33C4"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/-0mJlzZ5Fb_MWfHqeMNT1Nx\\/source_image?rev=5-fd1473c6d5a5e5f8b2673ea5af6ed2c5"]</attribute>
         <attribute name="storecookies" type="bool">1</attribute>
         <attribute name="sendcookies" type="bool">1</attribute>
         <attribute name="redirectmethod" type="bool">0</attribute>
@@ -208,8 +208,8 @@
         <attribute name="method" type="string">GET</attribute>
         <attribute name="followredirects" type="bool">0</attribute>
         <attribute name="body" type="string"></attribute>
-        <attribute name="order" type="int64">3</attribute>
-        <attribute name="name" type="string">Get Job Attachment</attribute>
+        <attribute name="order" type="int64">5</attribute>
+        <attribute name="name" type="string">Get SourceImage Attachment</attribute>
         <relationship name="parent" type="0/1" destination="LMREQUESTTREEITEM"></relationship>
         <relationship name="children" type="0/0" destination="LMREQUESTTREEITEM"></relationship>
         <relationship name="headers" type="0/0" destination="LMKEYVALUE" idrefs="z105"></relationship>
@@ -249,7 +249,7 @@
         <attribute name="order" type="int64">1</attribute>
         <attribute name="name" type="string">PORT</attribute>
         <relationship name="domain" type="0/1" destination="LMENVIRONMENTDOMAIN" idrefs="z132"></relationship>
-        <relationship name="values" type="0/0" destination="LMENVIRONMENTVARIABLEVALUE" idrefs="z127"></relationship>
+        <relationship name="values" type="0/0" destination="LMENVIRONMENTVARIABLEVALUE" idrefs="z127 z138 z146"></relationship>
     </object>
     <object type="LMKEYVALUE" id="z120">
         <attribute name="value" type="string"></attribute>
@@ -266,7 +266,7 @@
         <attribute name="order" type="int64">2</attribute>
         <attribute name="name" type="string">DB</attribute>
         <relationship name="domain" type="0/1" destination="LMENVIRONMENTDOMAIN" idrefs="z132"></relationship>
-        <relationship name="values" type="0/0" destination="LMENVIRONMENTVARIABLEVALUE" idrefs="z103"></relationship>
+        <relationship name="values" type="0/0" destination="LMENVIRONMENTVARIABLEVALUE" idrefs="z103 z143 z148"></relationship>
     </object>
     <object type="LMREQUEST" id="z122">
         <attribute name="uuid" type="string">3AA7EDC6-27C1-4220-85CA-0D6800545764</attribute>
@@ -278,7 +278,7 @@
         <attribute name="method" type="string">GET</attribute>
         <attribute name="followredirects" type="bool">0</attribute>
         <attribute name="body" type="string">[{"data":{"json":"{}"},"identifier":"com.luckymarmot.JSONDynamicValue"}]</attribute>
-        <attribute name="order" type="int64">6</attribute>
+        <attribute name="order" type="int64">9</attribute>
         <attribute name="name" type="string">Get Changes Feed</attribute>
         <relationship name="parent" type="0/1" destination="LMREQUESTTREEITEM"></relationship>
         <relationship name="children" type="0/0" destination="LMREQUESTTREEITEM"></relationship>
@@ -294,7 +294,7 @@
         <attribute name="order" type="int64">3</attribute>
         <attribute name="name" type="string">JOB_DOC_ID</attribute>
         <relationship name="domain" type="0/1" destination="LMENVIRONMENTDOMAIN" idrefs="z132"></relationship>
-        <relationship name="values" type="0/0" destination="LMENVIRONMENTVARIABLEVALUE" idrefs="z110"></relationship>
+        <relationship name="values" type="0/0" destination="LMENVIRONMENTVARIABLEVALUE" idrefs="z110 z141 z147"></relationship>
     </object>
     <object type="LMKEYVALUE" id="z125">
         <attribute name="value" type="string"></attribute>
@@ -316,7 +316,7 @@
         <attribute name="method" type="string">GET</attribute>
         <attribute name="followredirects" type="bool">0</attribute>
         <attribute name="body" type="string">[{"data":{"json":"{}"},"identifier":"com.luckymarmot.JSONDynamicValue"}]</attribute>
-        <attribute name="order" type="int64">4</attribute>
+        <attribute name="order" type="int64">7</attribute>
         <attribute name="name" type="string">List All Docs</attribute>
         <relationship name="parent" type="0/1" destination="LMREQUESTTREEITEM"></relationship>
         <relationship name="children" type="0/0" destination="LMREQUESTTREEITEM"></relationship>
@@ -329,24 +329,24 @@
     </object>
     <object type="LMREQUEST" id="z128">
         <attribute name="uuid" type="string">BF3D6414-61C6-4AC2-87DA-2B05793E7B15</attribute>
-        <attribute name="url" type="string">["http:\\/\\/",{"data":{"environmentVariable":"B8402246-5C2F-45A9-9A6D-A10448CF85B1"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},":",{"data":{"environmentVariable":"8445917B-130D-402D-877F-AFAE8F614FAA"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/",{"data":{"environmentVariable":"962AE993-2FB4-4EB7-8BBE-7FF04B2F33C4"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/",{"data":{"environmentVariable":"DA37B8C1-21A1-4FA2-9C9C-0C7F7D804888"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/source_image?rev=1-b3c81c589da1c52d427c105589668fd8"]</attribute>
+        <attribute name="url" type="string">["http:\\/\\/",{"data":{"environmentVariable":"B8402246-5C2F-45A9-9A6D-A10448CF85B1"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},":",{"data":{"environmentVariable":"8445917B-130D-402D-877F-AFAE8F614FAA"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/",{"data":{"environmentVariable":"962AE993-2FB4-4EB7-8BBE-7FF04B2F33C4"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/-IQbNVy8lYs7QDV9FI4VDZy\\/source_image?rev=1-c1beb35bf09800e27ec856b491e9096e"]</attribute>
         <attribute name="storecookies" type="bool">1</attribute>
         <attribute name="sendcookies" type="bool">1</attribute>
         <attribute name="redirectmethod" type="bool">0</attribute>
         <attribute name="redirectauthorization" type="bool">0</attribute>
         <attribute name="method" type="string">PUT</attribute>
         <attribute name="followredirects" type="bool">0</attribute>
-        <attribute name="body" type="string">[{"data":{"bookmarkData":"Ym9va7wCAAAAAAQQMAAAAEGkF7Fc33QOqa4GDi8fmuhxaBLidBl7\\/gKT7egFinWfuAEAAAQAAAADAwAAABgAKAUAAAABAQAAVXNlcnMAAAAHAAAAAQEAAHRsZXlkZW4ABwAAAAEBAABEZXNrdG9wABAAAAABAQAAYmFja3lhcmQxMDI0LmpwZxAAAAABBgAAEAAAACAAAAAwAAAAQAAAAAgAAAAEAwAANZgCAAAAAAAIAAAABAMAADp+CgAAAAAACAAAAAQDAADeVQ0AAAAAAAgAAAAEAwAADf67AQAAAAAQAAAAAQYAAHAAAACAAAAAkAAAAKAAAAAIAAAAAAQAAEG7+wNxAAAAGAAAAAECAAABAAAAAAAAAA8AAAAAAAAAAAAAAAAAAAAIAAAABAMAAAIAAAAAAAAABAAAAAMDAAD2AQAACAAAAAEJAABmaWxlOi8vLwwAAAABAQAATWFjaW50b3NoIEhECAAAAAQDAAAAAAAydAAAAAgAAAAABAAAQbrZ3S8AAAAkAAAAAQEAADJCODhBRTYzLTlBNkYtMzI5RS04ODIwLUYyNEJBQjIzM0FCQRgAAAABAgAAgQAAAAEACADvFwAAAQAIAAAAAAAAAAAAAQAAAAEBAAAvAAAAAAAAAAEFAADMAAAA\\/v\\/\\/\\/wEAAAAAAAAAEAAAAAQQAABYAAAAAAAAAAUQAACwAAAAAAAAABAQAADYAAAAAAAAAEAQAADIAAAAAAAAAAIgAACkAQAAAAAAAAUgAAAUAQAAAAAAABAgAAAkAQAAAAAAABEgAABYAQAAAAAAABIgAAA4AQAAAAAAABMgAABIAQAAAAAAACAgAACEAQAAAAAAADAgAACwAQAAAAAAAAHAAAD4AAAAAAAAABHAAAAgAAAAAAAAABLAAAAIAQAAAAAAABDQAAAEAAAAAAAAAA=="},"identifier":"com.luckymarmot.FileContentDynamicValue"}]</attribute>
-        <attribute name="order" type="int64">1</attribute>
+        <attribute name="body" type="string">[{"data":{"bookmarkData":"Ym9va8ACAAAAAAQQMAAAAC2oTotmOnTrkw+OZYeC0MLxqidMAGSH+65HnwERW9imvAEAAAQAAAADAwAAABgAKAUAAAABAQAAVXNlcnMAAAAHAAAAAQEAAHRsZXlkZW4ABwAAAAEBAABEZXNrdG9wABMAAAABAQAAY2hpY2Fnby10aGVhdHJlLmpwZwAQAAAAAQYAABAAAAAgAAAAMAAAAEAAAAAIAAAABAMAADWYAgAAAAAACAAAAAQDAAA6fgoAAAAAAAgAAAAEAwAA3lUNAAAAAAAIAAAABAMAAH3avQEAAAAAEAAAAAEGAAB0AAAAhAAAAJQAAACkAAAACAAAAAAEAABBvBVRJwAAABgAAAABAgAAAQAAAAAAAAAPAAAAAAAAAAAAAAAAAAAACAAAAAQDAAACAAAAAAAAAAQAAAADAwAA9gEAAAgAAAABCQAAZmlsZTovLy8MAAAAAQEAAE1hY2ludG9zaCBIRAgAAAAEAwAAAAAAMnQAAAAIAAAAAAQAAEG62d0vAAAAJAAAAAEBAAAyQjg4QUU2My05QTZGLTMyOUUtODgyMC1GMjRCQUIyMzNBQkEYAAAAAQIAAIEAAAABAAgA7xcAAAEACAAAAAAAAAAAAAEAAAABAQAALwAAAAAAAAABBQAAzAAAAP7\\/\\/\\/8BAAAAAAAAABAAAAAEEAAAXAAAAAAAAAAFEAAAtAAAAAAAAAAQEAAA3AAAAAAAAABAEAAAzAAAAAAAAAACIAAAqAEAAAAAAAAFIAAAGAEAAAAAAAAQIAAAKAEAAAAAAAARIAAAXAEAAAAAAAASIAAAPAEAAAAAAAATIAAATAEAAAAAAAAgIAAAiAEAAAAAAAAwIAAAtAEAAAAAAAABwAAA\\/AAAAAAAAAARwAAAIAAAAAAAAAASwAAADAEAAAAAAAAQ0AAABAAAAAAAAAA="},"identifier":"com.luckymarmot.FileContentDynamicValue"}]</attribute>
+        <attribute name="order" type="int64">2</attribute>
         <attribute name="name" type="string">Add Job SourceImage Attachment</attribute>
         <relationship name="parent" type="0/1" destination="LMREQUESTTREEITEM"></relationship>
         <relationship name="children" type="0/0" destination="LMREQUESTTREEITEM"></relationship>
         <relationship name="headers" type="0/0" destination="LMKEYVALUE" idrefs="z117 z108"></relationship>
     </object>
     <object type="LMKEYVALUE" id="z129">
-        <attribute name="value" type="string"></attribute>
+        <attribute name="value" type="string">application/json</attribute>
         <attribute name="order" type="int64">0</attribute>
-        <attribute name="name" type="string"></attribute>
+        <attribute name="name" type="string">Content-Type</attribute>
         <attribute name="enabled" type="bool">1</attribute>
         <relationship name="groupforbodyparameters" type="0/1" destination="LMREQUESTGROUP"></relationship>
         <relationship name="groupforheaders" type="0/1" destination="LMREQUESTGROUP"></relationship>
@@ -355,19 +355,19 @@
     </object>
     <object type="LMREQUEST" id="z130">
         <attribute name="uuid" type="string">9B3ED153-03FC-4295-B6CB-0B8C6AE61AB4</attribute>
-        <attribute name="url" type="string">["http:\\/\\/",{"data":{"environmentVariable":"B8402246-5C2F-45A9-9A6D-A10448CF85B1"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},":",{"data":{"environmentVariable":"8445917B-130D-402D-877F-AFAE8F614FAA"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/",{"data":{"environmentVariable":"962AE993-2FB4-4EB7-8BBE-7FF04B2F33C4"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/",{"data":{"environmentVariable":"DA37B8C1-21A1-4FA2-9C9C-0C7F7D804888"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"?rev=6-b3c7cecbe7475b88c74410684be489c2"]</attribute>
+        <attribute name="url" type="string">["http:\\/\\/",{"data":{"environmentVariable":"B8402246-5C2F-45A9-9A6D-A10448CF85B1"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},":",{"data":{"environmentVariable":"8445917B-130D-402D-877F-AFAE8F614FAA"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/",{"data":{"environmentVariable":"962AE993-2FB4-4EB7-8BBE-7FF04B2F33C4"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/",{"data":{"environmentVariable":"DA37B8C1-21A1-4FA2-9C9C-0C7F7D804888"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"?rev=1-433a90b4cee8b77bd1b49af637064851"]</attribute>
         <attribute name="storecookies" type="bool">1</attribute>
         <attribute name="sendcookies" type="bool">1</attribute>
         <attribute name="redirectmethod" type="bool">0</attribute>
         <attribute name="redirectauthorization" type="bool">0</attribute>
         <attribute name="method" type="string">PUT</attribute>
         <attribute name="followredirects" type="bool">0</attribute>
-        <attribute name="body" type="string">[{"data":{"json":"{\\"type\\":\\"job\\",\\"state\\":\\"READY_TO_PROCESS\\"}"},"identifier":"com.luckymarmot.JSONDynamicValue"}]</attribute>
-        <attribute name="order" type="int64">7</attribute>
+        <attribute name="body" type="string">["{\\"_attachments\\":{\\"source_image\\":{\\"content_type\\":\\"image\\/jpg\\",\\"digest\\":\\"sha1-mKPyC\\/0\\/\\/LLUZCEK\\/VNVYRFoayk=\\",\\"length\\":286097,\\"revpos\\":1,\\"stub\\":true},\\"style_image\\":{\\"content_type\\":\\"image\\/jpg\\",\\"digest\\":\\"sha1-kI16KyJjOKU9j3kRQhuJ\\/foyeDc=\\",\\"length\\":213832,\\"revpos\\":1,\\"stub\\":true}},\\"_id\\":\\"-VSmP1YLktQD5Hi4hMcT-Yo\\",\\"owner\\":\\"990482017664046\\",\\"state\\":\\"READY_TO_PROCESS2\\",\\"type\\":\\"job\\"}"]</attribute>
+        <attribute name="order" type="int64">10</attribute>
         <attribute name="name" type="string">Update Job State</attribute>
         <relationship name="parent" type="0/1" destination="LMREQUESTTREEITEM"></relationship>
         <relationship name="children" type="0/0" destination="LMREQUESTTREEITEM"></relationship>
-        <relationship name="headers" type="0/0" destination="LMKEYVALUE" idrefs="z129"></relationship>
+        <relationship name="headers" type="0/0" destination="LMKEYVALUE" idrefs="z133 z129"></relationship>
     </object>
     <object type="LMCOOKIEJAR" id="z131">
         <attribute name="uuid" type="string">5724D419-5879-4070-9342-899520EB912D</attribute>
@@ -378,7 +378,145 @@
         <attribute name="uuid" type="string">5DFB1543-DC0A-421E-B504-9195CD351780</attribute>
         <attribute name="order" type="int64">0</attribute>
         <attribute name="name" type="string">Default Domain</attribute>
-        <relationship name="environments" type="0/0" destination="LMENVIRONMENT" idrefs="z112"></relationship>
-        <relationship name="variables" type="0/0" destination="LMENVIRONMENTVARIABLE" idrefs="z119 z102 z124 z121"></relationship>
+        <relationship name="environments" type="0/0" destination="LMENVIRONMENT" idrefs="z149 z112 z142"></relationship>
+        <relationship name="variables" type="0/0" destination="LMENVIRONMENTVARIABLE" idrefs="z119 z124 z134 z102 z121"></relationship>
+    </object>
+    <object type="LMKEYVALUE" id="z133">
+        <attribute name="value" type="string"></attribute>
+        <attribute name="order" type="int64">1</attribute>
+        <attribute name="name" type="string"></attribute>
+        <attribute name="enabled" type="bool">1</attribute>
+        <relationship name="groupforbodyparameters" type="0/1" destination="LMREQUESTGROUP"></relationship>
+        <relationship name="groupforheaders" type="0/1" destination="LMREQUESTGROUP"></relationship>
+        <relationship name="groupforurlparameters" type="0/1" destination="LMREQUESTGROUP"></relationship>
+        <relationship name="request" type="0/1" destination="LMREQUEST" idrefs="z130"></relationship>
+    </object>
+    <object type="LMENVIRONMENTVARIABLE" id="z134">
+        <attribute name="uuid" type="string">6B19A204-2AC3-4CBC-AD7F-47E99BEAF94A</attribute>
+        <attribute name="order" type="int64">4</attribute>
+        <attribute name="name" type="string">ADMIN_PORT</attribute>
+        <relationship name="domain" type="0/1" destination="LMENVIRONMENTDOMAIN" idrefs="z132"></relationship>
+        <relationship name="values" type="0/0" destination="LMENVIRONMENTVARIABLEVALUE" idrefs="z135 z140 z145"></relationship>
+    </object>
+    <object type="LMENVIRONMENTVARIABLEVALUE" id="z135">
+        <attribute name="value" type="string">4985</attribute>
+        <relationship name="environment" type="1/1" destination="LMENVIRONMENT" idrefs="z112"></relationship>
+        <relationship name="variable" type="1/1" destination="LMENVIRONMENTVARIABLE" idrefs="z134"></relationship>
+    </object>
+    <object type="LMREQUEST" id="z136">
+        <attribute name="uuid" type="string">91D71542-AE40-47BF-914A-94102A4F1529</attribute>
+        <attribute name="url" type="string">["http:\\/\\/",{"data":{"environmentVariable":"B8402246-5C2F-45A9-9A6D-A10448CF85B1"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},":",{"data":{"environmentVariable":"8445917B-130D-402D-877F-AFAE8F614FAA"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/",{"data":{"environmentVariable":"962AE993-2FB4-4EB7-8BBE-7FF04B2F33C4"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/-0mJlzZ5Fb_MWfHqeMNT1Nx\\/result_image?rev=5-fd1473c6d5a5e5f8b2673ea5af6ed2c5"]</attribute>
+        <attribute name="storecookies" type="bool">1</attribute>
+        <attribute name="sendcookies" type="bool">1</attribute>
+        <attribute name="redirectmethod" type="bool">0</attribute>
+        <attribute name="redirectauthorization" type="bool">0</attribute>
+        <attribute name="method" type="string">GET</attribute>
+        <attribute name="followredirects" type="bool">0</attribute>
+        <attribute name="body" type="string"></attribute>
+        <attribute name="order" type="int64">6</attribute>
+        <attribute name="name" type="string">Get Job Result Attachment</attribute>
+        <relationship name="parent" type="0/1" destination="LMREQUESTTREEITEM"></relationship>
+        <relationship name="children" type="0/0" destination="LMREQUESTTREEITEM"></relationship>
+        <relationship name="headers" type="0/0" destination="LMKEYVALUE" idrefs="z137"></relationship>
+    </object>
+    <object type="LMKEYVALUE" id="z137">
+        <attribute name="value" type="string"></attribute>
+        <attribute name="order" type="int64">1</attribute>
+        <attribute name="name" type="string"></attribute>
+        <attribute name="enabled" type="bool">1</attribute>
+        <relationship name="groupforbodyparameters" type="0/1" destination="LMREQUESTGROUP"></relationship>
+        <relationship name="groupforheaders" type="0/1" destination="LMREQUESTGROUP"></relationship>
+        <relationship name="groupforurlparameters" type="0/1" destination="LMREQUESTGROUP"></relationship>
+        <relationship name="request" type="0/1" destination="LMREQUEST" idrefs="z136"></relationship>
+    </object>
+    <object type="LMENVIRONMENTVARIABLEVALUE" id="z138">
+        <attribute name="value" type="string">4984</attribute>
+        <relationship name="environment" type="1/1" destination="LMENVIRONMENT" idrefs="z142"></relationship>
+        <relationship name="variable" type="1/1" destination="LMENVIRONMENTVARIABLE" idrefs="z119"></relationship>
+    </object>
+    <object type="LMENVIRONMENTVARIABLEVALUE" id="z139">
+        <attribute name="value" type="string">ec2-54-145-244-2.compute-1.amazonaws.com</attribute>
+        <relationship name="environment" type="1/1" destination="LMENVIRONMENT" idrefs="z142"></relationship>
+        <relationship name="variable" type="1/1" destination="LMENVIRONMENTVARIABLE" idrefs="z102"></relationship>
+    </object>
+    <object type="LMENVIRONMENTVARIABLEVALUE" id="z140">
+        <attribute name="value" type="string">4985</attribute>
+        <relationship name="environment" type="1/1" destination="LMENVIRONMENT" idrefs="z142"></relationship>
+        <relationship name="variable" type="1/1" destination="LMENVIRONMENTVARIABLE" idrefs="z134"></relationship>
+    </object>
+    <object type="LMENVIRONMENTVARIABLEVALUE" id="z141">
+        <attribute name="value" type="string"></attribute>
+        <relationship name="environment" type="1/1" destination="LMENVIRONMENT" idrefs="z142"></relationship>
+        <relationship name="variable" type="1/1" destination="LMENVIRONMENTVARIABLE" idrefs="z124"></relationship>
+    </object>
+    <object type="LMENVIRONMENT" id="z142">
+        <attribute name="uuid" type="string">AC764069-F85E-455A-B5FA-939321C019C9</attribute>
+        <attribute name="order" type="int64">1</attribute>
+        <attribute name="name" type="string">aws-qe</attribute>
+        <relationship name="domain" type="0/1" destination="LMENVIRONMENTDOMAIN" idrefs="z132"></relationship>
+        <relationship name="variablesvalues" type="0/0" destination="LMENVIRONMENTVARIABLEVALUE" idrefs="z138 z143 z140 z141 z139"></relationship>
+    </object>
+    <object type="LMENVIRONMENTVARIABLEVALUE" id="z143">
+        <attribute name="value" type="string">deepstyle-cc</attribute>
+        <relationship name="environment" type="1/1" destination="LMENVIRONMENT" idrefs="z142"></relationship>
+        <relationship name="variable" type="1/1" destination="LMENVIRONMENTVARIABLE" idrefs="z121"></relationship>
+    </object>
+    <object type="LMENVIRONMENTVARIABLEVALUE" id="z144">
+        <attribute name="value" type="string">ec2-54-161-209-25.compute-1.amazonaws.com</attribute>
+        <relationship name="environment" type="1/1" destination="LMENVIRONMENT" idrefs="z149"></relationship>
+        <relationship name="variable" type="1/1" destination="LMENVIRONMENTVARIABLE" idrefs="z102"></relationship>
+    </object>
+    <object type="LMENVIRONMENTVARIABLEVALUE" id="z145">
+        <attribute name="value" type="string">4985</attribute>
+        <relationship name="environment" type="1/1" destination="LMENVIRONMENT" idrefs="z149"></relationship>
+        <relationship name="variable" type="1/1" destination="LMENVIRONMENTVARIABLE" idrefs="z134"></relationship>
+    </object>
+    <object type="LMENVIRONMENTVARIABLEVALUE" id="z146">
+        <attribute name="value" type="string">4984</attribute>
+        <relationship name="environment" type="1/1" destination="LMENVIRONMENT" idrefs="z149"></relationship>
+        <relationship name="variable" type="1/1" destination="LMENVIRONMENTVARIABLE" idrefs="z119"></relationship>
+    </object>
+    <object type="LMENVIRONMENTVARIABLEVALUE" id="z147">
+        <attribute name="value" type="string"></attribute>
+        <relationship name="environment" type="1/1" destination="LMENVIRONMENT" idrefs="z149"></relationship>
+        <relationship name="variable" type="1/1" destination="LMENVIRONMENTVARIABLE" idrefs="z124"></relationship>
+    </object>
+    <object type="LMENVIRONMENTVARIABLEVALUE" id="z148">
+        <attribute name="value" type="string">deepstyle-cc-sg-11</attribute>
+        <relationship name="environment" type="1/1" destination="LMENVIRONMENT" idrefs="z149"></relationship>
+        <relationship name="variable" type="1/1" destination="LMENVIRONMENTVARIABLE" idrefs="z121"></relationship>
+    </object>
+    <object type="LMENVIRONMENT" id="z149">
+        <attribute name="uuid" type="string">D72F4802-6FEE-4692-B3D5-BA0375C0E93F</attribute>
+        <attribute name="order" type="int64">2</attribute>
+        <attribute name="name" type="string">aws-qe-sg-11</attribute>
+        <relationship name="domain" type="0/1" destination="LMENVIRONMENTDOMAIN" idrefs="z132"></relationship>
+        <relationship name="variablesvalues" type="0/0" destination="LMENVIRONMENTVARIABLEVALUE" idrefs="z144 z145 z146 z147 z148"></relationship>
+    </object>
+    <object type="LMREQUEST" id="z150">
+        <attribute name="uuid" type="string">D79174CF-D3CE-417E-9090-0128273B2CF3</attribute>
+        <attribute name="url" type="string">["http:\\/\\/",{"data":{"environmentVariable":"B8402246-5C2F-45A9-9A6D-A10448CF85B1"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},":",{"data":{"environmentVariable":"8445917B-130D-402D-877F-AFAE8F614FAA"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/",{"data":{"environmentVariable":"962AE993-2FB4-4EB7-8BBE-7FF04B2F33C4"},"identifier":"com.luckymarmot.EnvironmentVariableDynamicValue"},"\\/"]</attribute>
+        <attribute name="storecookies" type="bool">1</attribute>
+        <attribute name="sendcookies" type="bool">1</attribute>
+        <attribute name="redirectmethod" type="bool">0</attribute>
+        <attribute name="redirectauthorization" type="bool">0</attribute>
+        <attribute name="method" type="string">GET</attribute>
+        <attribute name="followredirects" type="bool">0</attribute>
+        <attribute name="body" type="string">[{"data":{"json":"{}"},"identifier":"com.luckymarmot.JSONDynamicValue"}]</attribute>
+        <attribute name="order" type="int64">0</attribute>
+        <attribute name="name" type="string">Get DB info</attribute>
+        <relationship name="parent" type="0/1" destination="LMREQUESTTREEITEM"></relationship>
+        <relationship name="children" type="0/0" destination="LMREQUESTTREEITEM"></relationship>
+        <relationship name="headers" type="0/0" destination="LMKEYVALUE" idrefs="z151"></relationship>
+    </object>
+    <object type="LMKEYVALUE" id="z151">
+        <attribute name="value" type="string"></attribute>
+        <attribute name="order" type="int64">0</attribute>
+        <attribute name="name" type="string"></attribute>
+        <attribute name="enabled" type="bool">1</attribute>
+        <relationship name="groupforbodyparameters" type="0/1" destination="LMREQUESTGROUP"></relationship>
+        <relationship name="groupforheaders" type="0/1" destination="LMREQUESTGROUP"></relationship>
+        <relationship name="groupforurlparameters" type="0/1" destination="LMREQUESTGROUP"></relationship>
+        <relationship name="request" type="0/1" destination="LMREQUEST" idrefs="z150"></relationship>
     </object>
 </database>
