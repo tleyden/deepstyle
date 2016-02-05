@@ -1,0 +1,29 @@
+
+{
+  "log": ["CRUD", "REST+", "Access", "Changes+"],
+  "facebook": { "register": true },
+  "adminInterface": ":4985",
+  "databases": {
+      "deepstyle": {
+			"server": "http://localhost:8091",
+			"bucket": "deepstyle",
+			"users": {
+				"GUEST": {"disabled": false, "admin_channels": ["*"] }
+			},
+			"sync": `
+			function(doc, oldDoc) {
+				if (doc.type == "job") {
+					if (doc.owner) {
+					        // put this doc in the doc.owner channel
+      						channel(doc.owner);
+      						// give access of doc.owner to the doc.owner channel 
+      						access(doc.owner, doc.owner);
+    					}
+				}
+			}
+			`
+      }
+
+    }
+  }
+}
