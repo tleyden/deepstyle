@@ -14,6 +14,7 @@ This is the backend "changes worker" for the [deepstyle-ios](https://github.com/
 
 ## Steps to run
 
+* Kick off Sync Gateway running [this config](https://github.com/tleyden/deepstyle/blob/master/docs/sync-gateway-config.json)
 * Kick off ami `ami-5587c93f` (private AMI at the moment, stay tuned)
 * Run `deepstyle follow_sync_gw --url http://demo.couchbasemobile.com:4984/deepstyle/`
 * Use Paw/Curl to upload images
