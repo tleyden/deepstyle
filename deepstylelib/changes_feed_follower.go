@@ -9,6 +9,7 @@ import (
 
 	"github.com/couchbaselabs/logg"
 	"github.com/tleyden/go-couch"
+	"github.com/tleyden/uqclient/libuqclient"
 )
 
 /*
@@ -23,7 +24,10 @@ import (
 */
 
 type ChangesFeedFollower struct {
-	Database couch.Database
+	Database          couch.Database
+	UniqushURL        string
+	ProcessJobs       bool // Run NeuralStyle (typically only on AWS+GPU)
+	SendNotifications bool // Send push notifications when jobs done
 }
 
 func NewChangesFeedFollower(syncGatewayUrl string) (*ChangesFeedFollower, error) {
@@ -68,7 +72,7 @@ func (f ChangesFeedFollower) Follow() {
 }
 
 func (f ChangesFeedFollower) processChanges(changes couch.Changes) {
-	log.Printf("processChanges: %v", changes)
+
 	for _, change := range changes.Results {
 		if err := f.processChange(change); err != nil {
 			errMsg := fmt.Errorf("Error %v processing change %v", err, change)
@@ -118,13 +122,57 @@ func (f ChangesFeedFollower) processChange(change couch.Change) error {
 		return nil
 	}
 
-	// Run the job (call neural style)
-	config := configuration{
-		Database: f.Database,
-		TempDir:  "/tmp",
+	if f.ProcessJobs {
+
+		// Run the job (call neural style)
+		config := configuration{
+			Database: f.Database,
+			TempDir:  "/tmp",
+		}
+
+		if err := executeDeepStyleJob(config, jobDoc); err != nil {
+			return err
+		}
 	}
 
-	return executeDeepStyleJob(config, jobDoc)
+	if f.SendNotifications {
+		if err := f.sendNotifications(jobDoc); err != nil {
+			return err
+		}
+	}
+
+	return nil
+
+}
+
+func (f ChangesFeedFollower) sendNotifications(jobDoc JobDocument) error {
+
+	message := ""
+	switch jobDoc.State {
+	case StateProcessingSuccessful:
+		message = "Your DeepStyle work of art is ready!"
+	case StateProcessingFailed:
+		message = "Oops, something went wrong making your DeepStyle work of art!"
+	default:
+		// Job isn't finished, don't send any notification
+		return nil
+	}
+
+	// create subscriber in uniqush
+	uniqushClient := libuqclient.NewUniqushClient(f.UniqushURL)
+	uniqushService := uniqushClient.NewService("deepstyle", libuqclient.APNS)
+	subscriber := uniqushService.NewSubscriber(jobDoc.Owner, jobDoc.OwnerDeviceToken)
+	_, err := subscriber.Create()
+	if err != nil {
+		return err
+	}
+
+	_, err = subscriber.Push(message)
+	if err != nil {
+		return err
+	}
+
+	return nil
 
 }
 

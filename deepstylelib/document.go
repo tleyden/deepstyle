@@ -41,12 +41,13 @@ func (doc TypedDocument) IsJob() bool {
 
 type JobDocument struct {
 	TypedDocument
-	Attachments  Attachments `json:"_attachments"`
-	State        string      `json:"state"`
-	Owner        string      `json:"owner"`
-	ErrorMessage string      `json:"error_message"`
-	StdOutAndErr string      `json:"std_out_and_err"`
-	config       configuration
+	Attachments      Attachments `json:"_attachments"`
+	State            string      `json:"state"`
+	Owner            string      `json:"owner"`
+	OwnerDeviceToken string      `json:"owner_devicetoken"`
+	ErrorMessage     string      `json:"error_message"`
+	StdOutAndErr     string      `json:"std_out_and_err"`
+	config           configuration
 }
 
 func NewJobDocument(documentId string, config configuration) (jobDocument *JobDocument, err error) {
@@ -60,6 +61,14 @@ func NewJobDocument(documentId string, config configuration) (jobDocument *JobDo
 
 func (doc JobDocument) IsReadyToProcess() bool {
 	return doc.State == StateReadyToProcess
+}
+
+func (doc JobDocument) IsProcessingSuccessful() bool {
+	return doc.State == StateProcessingSuccessful
+}
+
+func (doc JobDocument) IsProcessingFailed() bool {
+	return doc.State == StateProcessingFailed
 }
 
 func (doc *JobDocument) SetStdOutAndErr(stdOutAndErr string) (updated bool, err error) {
