@@ -80,7 +80,7 @@ func init() {
 
 	follow_sync_gwCmd.PersistentFlags().String("uniqush-url", "", "Uniqush URL (push notifications)")
 
-	processJobs = follow_sync_gwCmd.PersistentFlags().BoolP("processs-jobs", "p", false, "Process DeepStyle jobs (requires deps + GPU)")
+	processJobs = follow_sync_gwCmd.PersistentFlags().BoolP("process-jobs", "p", false, "Process DeepStyle jobs (requires deps + GPU)")
 
 	sendNotifications = follow_sync_gwCmd.Flags().BoolP("send-notifications", "s", false, "Send push notifications (requires Uniqush url)")
 

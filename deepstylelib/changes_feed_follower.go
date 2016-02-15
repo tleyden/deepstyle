@@ -147,6 +147,8 @@ func (f ChangesFeedFollower) processChange(change couch.Change) error {
 
 func (f ChangesFeedFollower) sendNotifications(jobDoc JobDocument) error {
 
+	log.Printf("Sending notification for %v@%v", jobDoc.Id, jobDoc.Revision)
+
 	message := ""
 	switch jobDoc.State {
 	case StateProcessingSuccessful:
@@ -171,6 +173,8 @@ func (f ChangesFeedFollower) sendNotifications(jobDoc JobDocument) error {
 	if err != nil {
 		return err
 	}
+
+	log.Printf("Sent notification for %v@%v", jobDoc.Id, jobDoc.Revision)
 
 	return nil
 
