@@ -117,12 +117,12 @@ func (f ChangesFeedFollower) processChange(change couch.Change) error {
 	}
 	log.Printf("jobdoc: %+v", jobDoc)
 
-	// skip any jobs that aren't ready to process
-	if !jobDoc.IsReadyToProcess() {
-		return nil
-	}
-
 	if f.ProcessJobs {
+
+		// skip any jobs that aren't ready to process
+		if !jobDoc.IsReadyToProcess() {
+			return nil
+		}
 
 		// Run the job (call neural style)
 		config := configuration{
@@ -136,6 +136,7 @@ func (f ChangesFeedFollower) processChange(change couch.Change) error {
 	}
 
 	if f.SendNotifications {
+
 		if err := f.sendNotifications(jobDoc); err != nil {
 			return err
 		}
