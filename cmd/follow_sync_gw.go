@@ -7,8 +7,11 @@ import (
 	"github.com/tleyden/deepstyle/deepstylelib"
 )
 
-var processJobs *bool
-var sendNotifications *bool
+var (
+	processJobs       *bool
+	sendNotifications *bool
+	since             *string
+)
 
 var follow_sync_gwCmd = &cobra.Command{
 
@@ -49,7 +52,7 @@ var follow_sync_gwCmd = &cobra.Command{
 		}
 
 		// Create Changes follower
-		changesFollower, err := deepstylelib.NewChangesFeedFollower(urlVal)
+		changesFollower, err := deepstylelib.NewChangesFeedFollower(*since, urlVal)
 		if err != nil {
 			log.Panicf("%v", err)
 		}
@@ -83,6 +86,8 @@ func init() {
 	processJobs = follow_sync_gwCmd.PersistentFlags().BoolP("process-jobs", "p", false, "Process DeepStyle jobs (requires deps + GPU)")
 
 	sendNotifications = follow_sync_gwCmd.Flags().BoolP("send-notifications", "s", false, "Send push notifications (requires Uniqush url)")
+
+	since = follow_sync_gwCmd.PersistentFlags().String("since", "", "Since value to start changes feed at (defaults to last sequence)")
 
 	// Cobra supports local flags which will only run when this command is called directly
 	// follow_sync_gwCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle" )

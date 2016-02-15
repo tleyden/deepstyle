@@ -1,10 +1,12 @@
 package deepstylelib
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
+	"os"
 	"strings"
 
 	"github.com/couchbaselabs/logg"
@@ -28,9 +30,10 @@ type ChangesFeedFollower struct {
 	UniqushURL        string
 	ProcessJobs       bool // Run NeuralStyle (typically only on AWS+GPU)
 	SendNotifications bool // Send push notifications when jobs done
+	StartingSince     string
 }
 
-func NewChangesFeedFollower(syncGatewayUrl string) (*ChangesFeedFollower, error) {
+func NewChangesFeedFollower(startingSince, syncGatewayUrl string) (*ChangesFeedFollower, error) {
 
 	db, err := GetDbConnection(syncGatewayUrl)
 	if err != nil {
@@ -38,7 +41,8 @@ func NewChangesFeedFollower(syncGatewayUrl string) (*ChangesFeedFollower, error)
 	}
 
 	return &ChangesFeedFollower{
-		Database: db,
+		Database:      db,
+		StartingSince: startingSince,
 	}, nil
 }
 
@@ -66,8 +70,56 @@ func (f ChangesFeedFollower) Follow() {
 
 	options := map[string]interface{}{}
 	options["feed"] = "longpoll"
+	since = f.determineStartingSince(f.StartingSince)
+	options["since"] = since
 
 	f.Database.Changes(handleChange, options)
+
+}
+
+func (f ChangesFeedFollower) lastProcessedSeq() (string, error) {
+
+	infile, err := os.Open("lastprocessed.db")
+	if err != nil {
+		log.Printf("could not open lastprocessed.db file for reading")
+		return "", err
+	}
+	defer infile.Close()
+	reader := bufio.NewReader(infile)
+	line, err := reader.ReadString('\n')
+	if err != nil {
+		log.Printf("could not read from lastprocessed.db file")
+		return "", err
+	}
+	return strings.TrimSpace(line), nil
+
+}
+
+func (f ChangesFeedFollower) determineStartingSince(startingSince string) interface{} {
+
+	if startingSince != "" {
+		// if we have been passed a starting since, use it
+		log.Printf("Using startingSince param: %v", startingSince)
+		return startingSince
+	} else {
+		// otherwise try to get the stored last processed sequence
+		lastProcessedSeq, err := f.lastProcessedSeq()
+		if err == nil {
+			log.Printf("Using saved last seq: %v", lastProcessedSeq)
+			return lastProcessedSeq
+		} else {
+			log.Printf("Error getting stored last seq: %v", err)
+
+			// if that's empty, find the sequence of most recent change
+			lastSequence, err := f.Database.LastSequence()
+			if err != nil {
+				logg.LogPanic("Error getting LastSequence: %v", err)
+			}
+			log.Printf("Using end of changes feed: %v", lastSequence)
+			return lastSequence
+		}
+
+	}
 
 }
 
