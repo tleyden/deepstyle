@@ -43,6 +43,7 @@ type JobDocument struct {
 	TypedDocument
 	Attachments      Attachments `json:"_attachments"`
 	State            string      `json:"state"`
+	CreatedAt        string      `json:"created_at"`
 	Owner            string      `json:"owner"`
 	OwnerDeviceToken string      `json:"owner_devicetoken"`
 	ErrorMessage     string      `json:"error_message"`
