@@ -33,6 +33,7 @@ var trackedJobs map[string]TrackedDeepStyleJob = map[string]TrackedDeepStyleJob{
 func numJobsReadyOrBeingProcessed(syncGwAdminUrl string) (metricValue float64, err error) {
 
 	viewResults, err := getJobsReadyOrBeingProcessed(syncGwAdminUrl)
+	log.Printf("Job ready or being processed: %+v", viewResults)
 	if err != nil {
 		return 0.0, err
 	}
@@ -55,6 +56,7 @@ func getJobDocsBeingProcessed(syncGwAdminUrl string) (jobs []JobDocument, err er
 	}
 
 	viewResults, err := getJobsReadyOrBeingProcessed(syncGwAdminUrl)
+	log.Printf("Job ready or being processed: %+v", viewResults)
 	if err != nil {
 		return jobs, err
 	}
