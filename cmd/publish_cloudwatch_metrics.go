@@ -1,9 +1,7 @@
 package cmd
 
 import (
-	_ "expvar"
 	"log"
-	"net/http"
 
 	"github.com/spf13/cobra"
 	"github.com/tleyden/deepstyle/deepstylelib"
@@ -28,10 +26,6 @@ var publish_cloudwatch_metricsCmd = &cobra.Command{
 			log.Printf("ERROR: Missing: --url.\n  %v", cmd.UsageString())
 			return
 		}
-
-		go func() {
-			log.Fatal(http.ListenAndServe(":4980", nil))
-		}()
 
 		err := deepstylelib.AddCloudWatchMetrics(urlVal)
 		if err != nil {
